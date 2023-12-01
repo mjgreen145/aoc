@@ -1,5 +1,3 @@
-import kotlin.math.max
-
 fun example() {
     val text = object {}.javaClass.getResourceAsStream("example-input.txt")?.bufferedReader()?.readText()
 
