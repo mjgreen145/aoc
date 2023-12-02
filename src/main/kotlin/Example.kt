@@ -1,4 +1,4 @@
-fun example() {
+fun main() {
     val text = object {}.javaClass.getResourceAsStream("example-input.txt")?.bufferedReader()?.readText()
 
     val totals =

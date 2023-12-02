@@ -1,4 +1,4 @@
-fun day1() {
+fun main() {
     val text = object {}.javaClass.getResourceAsStream("day1.txt")?.bufferedReader()?.readText()
 
     // part 1
