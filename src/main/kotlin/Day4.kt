@@ -1,4 +1,5 @@
 import kotlin.math.pow
+import kotlin.time.measureTime
 
 fun twoToPowerOf(power: Int): Int {
     val two = 2.0;
@@ -39,6 +40,9 @@ fun main() {
         return counts.sum();
     }
 
-    part1(lines).println()
-    part2(lines).println()
+    val timePart1 = measureTime { part1(lines).println() }
+    println("Part 1 took $timePart1")
+    val timePart2 = measureTime { part2(lines).println() }
+    println("Part 2 took $timePart2")
+
 }
