@@ -1,7 +1,7 @@
 data class Number(val value: Int, val row: Int, val charRange: IntRange);
 
 fun main() {
-    val lines = readInput("day3")
+    val lines = readLines("day3")
 
     fun part1(lines: List<String>, numbers: List<Number>): Int {
         return numbers.filter { number ->

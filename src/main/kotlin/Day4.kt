@@ -15,7 +15,7 @@ fun numWinningNumbers(line: String): Int {
 }
 
 fun main() {
-    val lines = readInput("day4")
+    val lines = readLines("day4")
 
     fun part1(lines: List<String>): Int {
         return lines.sumOf { line ->
@@ -44,5 +44,4 @@ fun main() {
     println("Part 1 took $timePart1")
     val timePart2 = measureTime { part2(lines).println() }
     println("Part 2 took $timePart2")
-
 }
