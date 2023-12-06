@@ -2,7 +2,6 @@ import kotlin.math.floor
 import kotlin.time.measureTime
 
 fun iter(a: Long, b: Long, totalTime: Long, timeToBeat: Long): Long {
-    println("$a, $b");
     if (a == b) {
         return if (a * (totalTime - a) <= timeToBeat) a + 1 else a
     }
