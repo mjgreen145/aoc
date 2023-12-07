@@ -16,8 +16,9 @@ fun splitBy(a: LongRange, b: LongRange): Pair<LongRange?, List<LongRange>> {
 }
 
 fun main() {
+    val exampleText = readInput("day5-example")
     val text = readInput("day5")
-    val blocks = text.split("\n\n")
+    val blocks = exampleText.split("\n\n")
 
     val maps = blocks.drop(1).map {
         it.split("\n").drop(1).map { line ->
@@ -26,7 +27,7 @@ fun main() {
         }
     }
 
-    fun part1(input: String): Long {
+    fun part1(): Long {
         val seeds = blocks.first().substringAfter(": ").split(" ").map { it.toLong() }
 
         val locations = seeds.map { seed ->
@@ -39,7 +40,7 @@ fun main() {
         return locations.min()
     }
 
-    fun part2(lines: String): Long {
+    fun part2(): Long {
         val seedRanges = blocks.first().substringAfter(": ").split(" ").map { it.toLong() }.chunked(2)
             .map { (rangeStart, rangeLength) -> LongRange(rangeStart, rangeStart + rangeLength - 1) }
 
@@ -66,8 +67,8 @@ fun main() {
         return finalRanges.sortedBy { it.first }.first().first
     }
 
-    val timePart1 = measureTime { part1(text).println() }
+    val timePart1 = measureTime { part1().println() }
     println("Part 1 took $timePart1")
-//    val timePart2 = measureTime { part2(text).println() }
-//    println("Part 2 took $timePart2")
+    val timePart2 = measureTime { part2().println() }
+    println("Part 2 took $timePart2")
 }
