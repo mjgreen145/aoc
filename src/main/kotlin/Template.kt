@@ -12,11 +12,11 @@ fun main() {
         return 0
     }
 
-    check(part1(exampleLines) == 0) { -> "Part 1 example passed" };
+    check(part1(exampleLines) == 0) { -> "Part 1 example failed" };
     val timePart1 = measureTime { part1(lines).println() }
     println("Part 1 took $timePart1")
 
-    check(part2(exampleLines) == 0) { -> "Part 2 example passed" };
+    check(part2(exampleLines) == 0) { -> "Part 2 example failed" };
     val timePart2 = measureTime { part2(lines).println() }
     println("Part 2 took $timePart2")
 }
