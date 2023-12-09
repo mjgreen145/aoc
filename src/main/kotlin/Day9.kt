@@ -1,21 +1,15 @@
 import kotlin.time.measureTime
 
 fun diffs(numSeq: List<Int>): List<Int> {
-    return numSeq.windowed(2, 1, false).map { (x, y) -> y - x }
+    return numSeq.windowed(2).map { (x, y) -> y - x }
 }
 
 fun nextNum(numSeq: List<Int>): Int {
-    if (numSeq.toSet().size == 1) {
-        return numSeq.first()
-    }
-    return numSeq.last() + nextNum(diffs(numSeq))
+    return numSeq.last() + (if (numSeq.toSet().size != 1) nextNum(diffs(numSeq)) else 0)
 }
 
 fun prevNum(numSeq: List<Int>): Int {
-    if (numSeq.toSet().size == 1) {
-        return numSeq.first()
-    }
-    return numSeq.first() - prevNum(diffs(numSeq))
+    return numSeq.first() - (if (numSeq.toSet().size != 1) prevNum(diffs(numSeq)) else 0)
 }
 
 fun main() {
