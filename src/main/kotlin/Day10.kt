@@ -1,3 +1,4 @@
+import java.io.File
 import kotlin.time.measureTime
 
 enum class Dir {
@@ -19,11 +20,11 @@ fun inverseDir(dir: Dir): Dir {
 
 typealias Coord = Pair<Int, Int>
 
-data class Pipe(val dirs: List<Dir>, val isStart: Boolean, val coord: Coord)
+data class Pipe(val dirs: List<Dir>, val isStart: Boolean, val coord: Coord, val char: Char)
 typealias Grid = List<List<Pipe>>
 
 fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
-    var startPipe = Pipe(listOf(), true, Pair(0, 0));
+    var startPipe = Pipe(listOf(), true, Pair(0, 0), 'S');
     val grid = lines.mapIndexed { y, line ->
         line.mapIndexed { x, char ->
             if (char == 'S') {
@@ -41,17 +42,17 @@ fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
                     startDirs.add(Dir.West)
                 }
                 assert(startDirs.size == 2) { "Found ${startDirs.size} viable directions for the start" }
-                startPipe = Pipe(startDirs, true, Pair(x, y))
+                startPipe = Pipe(startDirs, true, Pair(x, y), char)
                 startPipe
             } else {
                 when (char) {
-                    '|' -> Pipe(listOf(Dir.North, Dir.South), false, Pair(x, y))
-                    '-' -> Pipe(listOf(Dir.East, Dir.West), false, Pair(x, y))
-                    'L' -> Pipe(listOf(Dir.North, Dir.East), false, Pair(x, y))
-                    'J' -> Pipe(listOf(Dir.North, Dir.West), false, Pair(x, y))
-                    '7' -> Pipe(listOf(Dir.South, Dir.West), false, Pair(x, y))
-                    'F' -> Pipe(listOf(Dir.South, Dir.East), false, Pair(x, y))
-                    else -> Pipe(listOf(), false, Pair(x, y))
+                    '|' -> Pipe(listOf(Dir.North, Dir.South), false, Pair(x, y), char)
+                    '-' -> Pipe(listOf(Dir.East, Dir.West), false, Pair(x, y), char)
+                    'L' -> Pipe(listOf(Dir.North, Dir.East), false, Pair(x, y), char)
+                    'J' -> Pipe(listOf(Dir.North, Dir.West), false, Pair(x, y), char)
+                    '7' -> Pipe(listOf(Dir.South, Dir.West), false, Pair(x, y), char)
+                    'F' -> Pipe(listOf(Dir.South, Dir.East), false, Pair(x, y), char)
+                    else -> Pipe(listOf(), false, Pair(x, y), char)
                 }
             }
         }
@@ -153,6 +154,8 @@ fun main() {
         val containedCoords =
             getContainedCoords(grid, path, pathCoords, pathIsClockwise, dirToWalk, mutableSetOf())
 
+        writeDebug(grid, pathCoords, containedCoords);
+
         return containedCoords.size
     }
 
@@ -167,4 +170,61 @@ fun main() {
 
     val timePart2 = measureTime { part2(lines).println() }
     println("Part 2 took $timePart2")
+}
+
+fun writeDebug(grid: Grid, pathCoords: Set<Coord>, containedCoords: Set<Coord>) {
+    val html = """
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <style>
+      body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100vh;
+          background-color: #000;
+          color: white;
+          font-family: monospace;
+      }
+      
+      .line {
+        display: flex;
+      }
+      
+      .path {
+        background-color: orangered;
+      }
+      
+      .contained {
+        background-color: lightgoldenrodyellow;
+        color: black;
+      }
+      
+      .start {
+        background-color: green;
+      }
+  </style>
+</head>
+<body>
+    ${
+        grid.map { line ->
+            val pipes = line.map { pipe ->
+                val classes = listOfNotNull(
+                    "pipe",
+                    if (pathCoords.contains(pipe.coord)) "path" else null,
+                    if (containedCoords.contains(pipe.coord)) "contained" else null,
+                    if (pipe.isStart) "start" else null,
+                )
+                "<div class=\"${classes.joinToString(" ")}\">${pipe.char}</div>"
+            }.joinToString("")
+            "<div class=\"line\">${pipes}</div>"
+        }.joinToString("")
+    }
+</body>
+</html>
+    """.trimIndent()
+
+    File("./debug.html").writeText(html)
 }
