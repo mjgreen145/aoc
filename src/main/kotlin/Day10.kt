@@ -1,10 +1,11 @@
 import kotlin.time.measureTime
 
 enum class Dir {
-    North,
-    South,
-    East,
-    West
+    North, South, East, West
+}
+
+enum class Turn {
+    Left, Right
 }
 
 fun inverseDir(dir: Dir): Dir {
@@ -19,11 +20,10 @@ fun inverseDir(dir: Dir): Dir {
 typealias Coord = Pair<Int, Int>
 
 data class Pipe(val dirs: List<Dir>, val isStart: Boolean, val coord: Coord)
-
-typealias Grid = List<List<Pipe?>>
+typealias Grid = List<List<Pipe>>
 
 fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
-    var startPipe: Pipe? = null;
+    var startPipe = Pipe(listOf(), true, Pair(0, 0));
     val grid = lines.mapIndexed { y, line ->
         line.mapIndexed { x, char ->
             if (char == 'S') {
@@ -51,7 +51,7 @@ fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
                     'J' -> Pipe(listOf(Dir.North, Dir.West), false, Pair(x, y))
                     '7' -> Pipe(listOf(Dir.South, Dir.West), false, Pair(x, y))
                     'F' -> Pipe(listOf(Dir.South, Dir.East), false, Pair(x, y))
-                    else -> null
+                    else -> Pipe(listOf(), false, Pair(x, y))
                 }
             }
         }
@@ -59,21 +59,66 @@ fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
     return Pair(grid, startPipe);
 }
 
-tailrec fun walk(grid: Grid, current: Pipe, dirToWalk: Dir, prevPipes: MutableList<Pipe>): List<Pipe> {
-    current.println()
+val clockwiseDirs = listOf(Dir.North, Dir.East, Dir.South, Dir.West)
+
+tailrec fun walk(
+    grid: Grid,
+    current: Pipe,
+    dirToWalk: Dir,
+    prevPipes: MutableList<Pair<Pipe, Turn?>>
+): List<Pair<Pipe, Turn?>> {
     val (x, y) = current.coord;
     val nextPipe = when (dirToWalk) {
-        Dir.North -> grid[y - 1][x]!!
-        Dir.East -> grid[y][x + 1]!!
-        Dir.South -> grid[y + 1][x]!!
-        Dir.West -> grid[y][x - 1]!!
+        Dir.North -> grid[y - 1][x]
+        Dir.East -> grid[y][x + 1]
+        Dir.South -> grid[y + 1][x]
+        Dir.West -> grid[y][x - 1]
     }
+    val nextDirToWalk = nextPipe.dirs.first { d -> d != inverseDir(dirToWalk) }
+    val turn = when ((clockwiseDirs.indexOf(nextDirToWalk) - clockwiseDirs.indexOf(dirToWalk)).mod(4)) {
+        1, -3 -> Turn.Right
+        -1, 3 -> Turn.Left
+        else -> null
+    }
+
+    prevPipes.addLast(Pair(current, turn))
     if (nextPipe.isStart) {
         return prevPipes
     }
-    prevPipes.addLast(current)
-    val nextDirToWalk = nextPipe.dirs.first { d -> d != inverseDir(dirToWalk) }
     return walk(grid, nextPipe, nextDirToWalk, prevPipes)
+}
+
+tailrec fun getContainedCoords(
+    grid: Grid,
+    path: List<Pair<Pipe, Turn?>>,
+    pathCoords: Set<Coord>,
+    pathIsClockwise: Boolean,
+    currentDir: Dir,
+    containedCoords: MutableSet<Coord>
+): Set<Coord> {
+    if (path.size == 0) {
+        return containedCoords;
+    }
+    val (x, y) = path.first().first.coord;
+
+    val internalCoords = when (Pair(currentDir, pathIsClockwise)) {
+        Pair(Dir.North, true), Pair(Dir.South, false) -> grid[y].drop(x + 1)
+        Pair(Dir.South, true), Pair(Dir.North, false) -> grid[y].take(x).reversed()
+        Pair(Dir.East, true), Pair(Dir.West, false) -> grid.drop(y + 1).map { it[x] }
+        Pair(Dir.West, true), Pair(Dir.East, false) -> grid.take(y).map { it[x] }.reversed()
+        else -> throw Exception("Not possible")
+    }
+    val coordsToAdd = internalCoords.takeWhile { p -> !pathCoords.contains(p.coord) }
+    coordsToAdd.forEach { pipe ->
+        containedCoords.add(pipe.coord)
+    }
+
+    val nextDir = when (path.first().second) {
+        Turn.Right -> clockwiseDirs[(clockwiseDirs.indexOf(currentDir) + 1).mod(4)]
+        Turn.Left -> clockwiseDirs[(clockwiseDirs.indexOf(currentDir) - 1).mod(4)]
+        null -> currentDir
+    }
+    return getContainedCoords(grid, path.drop(1), pathCoords, pathIsClockwise, nextDir, containedCoords)
 }
 
 fun main() {
@@ -92,7 +137,23 @@ fun main() {
     }
 
     fun part2(lines: List<String>): Int {
-        return 0
+        val (grid, start) = parseGrid(lines)
+        if (start == null) {
+            throw Exception("Failed to find start point")
+        }
+        val dirToWalk = start.dirs.first()
+        val path = walk(grid, start, dirToWalk, mutableListOf())
+
+        val rightTurns = path.filter { (_, turn) -> turn == Turn.Right }.size
+        val leftTurns = path.filter { (_, turn) -> turn == Turn.Left }.size
+
+        val pathIsClockwise = rightTurns > leftTurns
+        val pathCoords = path.map { it.first.coord }.toSet()
+
+        val containedCoords =
+            getContainedCoords(grid, path, pathCoords, pathIsClockwise, dirToWalk, mutableSetOf())
+
+        return containedCoords.size
     }
 
     val part1Example = part1(exampleLines)
