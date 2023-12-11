@@ -65,18 +65,18 @@ val clockwiseDirs = listOf(Dir.North, Dir.East, Dir.South, Dir.West)
 tailrec fun walk(
     grid: Grid,
     current: Pipe,
-    dirToWalk: Dir,
+    currentDir: Dir,
     prevPipes: MutableList<Pair<Pipe, Turn?>>
 ): List<Pair<Pipe, Turn?>> {
     val (x, y) = current.coord;
-    val nextPipe = when (dirToWalk) {
+    val nextDir = current.dirs.first { d -> d != inverseDir(currentDir) }
+    val nextPipe = when (nextDir) {
         Dir.North -> grid[y - 1][x]
         Dir.East -> grid[y][x + 1]
         Dir.South -> grid[y + 1][x]
         Dir.West -> grid[y][x - 1]
     }
-    val nextDirToWalk = nextPipe.dirs.first { d -> d != inverseDir(dirToWalk) }
-    val turn = when ((clockwiseDirs.indexOf(nextDirToWalk) - clockwiseDirs.indexOf(dirToWalk)).mod(4)) {
+    val turn = when ((clockwiseDirs.indexOf(nextDir) - clockwiseDirs.indexOf(currentDir)).mod(4)) {
         1, -3 -> Turn.Right
         -1, 3 -> Turn.Left
         else -> null
@@ -86,20 +86,17 @@ tailrec fun walk(
     if (nextPipe.isStart) {
         return prevPipes
     }
-    return walk(grid, nextPipe, nextDirToWalk, prevPipes)
+    return walk(grid, nextPipe, nextDir, prevPipes)
 }
 
-tailrec fun getContainedCoords(
+fun addContainedCoords(
     grid: Grid,
     path: List<Pair<Pipe, Turn?>>,
     pathCoords: Set<Coord>,
     pathIsClockwise: Boolean,
     currentDir: Dir,
     containedCoords: MutableSet<Coord>
-): Set<Coord> {
-    if (path.size == 0) {
-        return containedCoords;
-    }
+) {
     val (x, y) = path.first().first.coord;
 
     val internalCoords = when (Pair(currentDir, pathIsClockwise)) {
@@ -110,14 +107,34 @@ tailrec fun getContainedCoords(
         else -> throw Exception("Not possible")
     }
     val coordsToAdd = internalCoords.takeWhile { p -> !pathCoords.contains(p.coord) }
+
     coordsToAdd.forEach { pipe ->
         containedCoords.add(pipe.coord)
     }
+}
+
+tailrec fun getContainedCoords(
+    grid: Grid,
+    path: List<Pair<Pipe, Turn?>>,
+    pathCoords: Set<Coord>,
+    pathIsClockwise: Boolean,
+    currentDir: Dir,
+    containedCoords: MutableSet<Coord>
+): Set<Coord> {
+    if (path.isEmpty()) {
+        return containedCoords;
+    }
+
+    addContainedCoords(grid, path, pathCoords, pathIsClockwise, currentDir, containedCoords);
 
     val nextDir = when (path.first().second) {
         Turn.Right -> clockwiseDirs[(clockwiseDirs.indexOf(currentDir) + 1).mod(4)]
         Turn.Left -> clockwiseDirs[(clockwiseDirs.indexOf(currentDir) - 1).mod(4)]
         null -> currentDir
+    }
+
+    if (nextDir != currentDir) {
+        addContainedCoords(grid, path, pathCoords, pathIsClockwise, nextDir, containedCoords);
     }
     return getContainedCoords(grid, path.drop(1), pathCoords, pathIsClockwise, nextDir, containedCoords)
 }
@@ -209,18 +226,18 @@ fun writeDebug(grid: Grid, pathCoords: Set<Coord>, containedCoords: Set<Coord>) 
 </head>
 <body>
     ${
-        grid.map { line ->
-            val pipes = line.map { pipe ->
+        grid.joinToString("") { line ->
+            val pipes = line.joinToString("") { pipe ->
                 val classes = listOfNotNull(
                     "pipe",
                     if (pathCoords.contains(pipe.coord)) "path" else null,
                     if (containedCoords.contains(pipe.coord)) "contained" else null,
                     if (pipe.isStart) "start" else null,
                 )
-                "<div class=\"${classes.joinToString(" ")}\">${pipe.char}</div>"
-            }.joinToString("")
+                "<div class=\"${classes.joinToString(" ")}\" data-coord=\"(${pipe.coord.first},${pipe.coord.second})\">${pipe.char}</div>"
+            }
             "<div class=\"line\">${pipes}</div>"
-        }.joinToString("")
+        }
     }
 </body>
 </html>
