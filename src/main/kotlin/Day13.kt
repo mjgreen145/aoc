@@ -1,13 +1,18 @@
 import java.lang.Exception
 import kotlin.time.measureTime
 
+fun getCols(lines: List<String>): List<String> {
+    return lines.first().mapIndexed { i, _ -> lines.map { it[i] }.joinToString("") }
+}
+
 fun findMirror(block: String): Int {
-    val horizontalMatch = findMirrorHorizontal(block);
+    val lines = block.split("\n");
+    val horizontalMatch = findReflectionIndex(lines);
     if (horizontalMatch != null) {
         return horizontalMatch * 100
     }
 
-    val verticalMatch = findMirrorVertical(block)
+    val verticalMatch = findReflectionIndex(getCols(lines))
     if (verticalMatch != null) {
         return verticalMatch
     }
@@ -15,8 +20,7 @@ fun findMirror(block: String): Int {
     throw Exception("Failed to find any match")
 }
 
-fun findMirrorHorizontal(block: String): Int? {
-    val lines = block.split("\n")
+fun findReflectionIndex(lines: List<String>): Int? {
     val reflectedLineIndexes = lines
         .mapIndexed { i, l -> i }
         .filter { i -> i + 1 < lines.size && lines[i] == lines[i + 1] }
@@ -27,30 +31,6 @@ fun findMirrorHorizontal(block: String): Int? {
                 break
             }
             if (index - i == 0 || index + i + 1 == lines.size - 1) {
-                return index + 1;
-            }
-        }
-    }
-    return null
-}
-
-fun getCol(lines: List<String>, index: Int): String {
-    return lines.map { it[index] }.joinToString("")
-}
-
-fun findMirrorVertical(block: String): Int? {
-    val lines = block.split("\n")
-    val lineLength = lines.first().length
-    val reflectedColIndexes = lines.first()
-        .mapIndexed { i, _ -> i }
-        .filter { i -> i + 1 < lineLength && getCol(lines, i) == getCol(lines, i + 1) }
-
-    reflectedColIndexes.forEach { index ->
-        for (i in 0..index) {
-            if (getCol(lines, index - i) != getCol(lines, index + i + 1)) {
-                break
-            }
-            if (index - i == 0 || index + i + 1 == lineLength - 1) {
                 return index + 1;
             }
         }
