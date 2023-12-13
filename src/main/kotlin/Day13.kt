@@ -5,14 +5,18 @@ fun getCols(lines: List<String>): List<String> {
     return lines.first().mapIndexed { i, _ -> lines.map { it[i] }.joinToString("") }
 }
 
-fun findMirror(block: String): Int {
+fun editDistance(str1: String, str2: String): Int {
+    return str1.mapIndexed { index, c -> c != str2[index] }.count { it }
+}
+
+fun findMirror(block: String, smudgesAllowed: Int = 0): Int {
     val lines = block.split("\n");
-    val horizontalMatch = findReflectionIndex(lines);
+    val horizontalMatch = findReflectionIndex(lines, smudgesAllowed);
     if (horizontalMatch != null) {
         return horizontalMatch * 100
     }
 
-    val verticalMatch = findReflectionIndex(getCols(lines))
+    val verticalMatch = findReflectionIndex(getCols(lines), smudgesAllowed)
     if (verticalMatch != null) {
         return verticalMatch
     }
@@ -20,11 +24,13 @@ fun findMirror(block: String): Int {
     throw Exception("Failed to find any match")
 }
 
-fun findReflectionIndex(lines: List<String>): Int? {
-    val reflectedLineIndexes = lines
-        .mapIndexed { i, l -> i }
-        .filter { i -> i + 1 < lines.size && lines[i] == lines[i + 1] }
+fun findReflectionIndex(lines: List<String>, smudgesAllowed: Int): Int? {
+    val reflectedLineIndexes = List(lines.size) { i -> i }
+        .filter { i ->
+            i + 1 < lines.size && editDistance(lines[i], lines[i + 1]) <= smudgesAllowed
+        }
 
+    var smudgesLeft = smudgesAllowed;
     reflectedLineIndexes.forEach { index ->
         for (i in 0..index) {
             if (lines[index - i] != lines[index + i + 1]) {
