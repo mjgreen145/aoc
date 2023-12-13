@@ -30,14 +30,20 @@ fun findReflectionIndex(lines: List<String>, smudgesAllowed: Int): Int? {
             i + 1 < lines.size && editDistance(lines[i], lines[i + 1]) <= smudgesAllowed
         }
 
-    var smudgesLeft = smudgesAllowed;
     reflectedLineIndexes.forEach { index ->
+        var smudgesLeft = smudgesAllowed;
         for (i in 0..index) {
-            if (lines[index - i] != lines[index + i + 1]) {
+            val editDistance = editDistance(lines[index - i], lines[index + i + 1])
+            if (editDistance > smudgesLeft) {
                 break
             }
+            smudgesLeft -= editDistance
             if (index - i == 0 || index + i + 1 == lines.size - 1) {
-                return index + 1;
+                if (smudgesLeft == 0) {
+                    return index + 1
+                } else {
+                    break;
+                };
             }
         }
     }
@@ -50,8 +56,8 @@ fun main() {
 
     fun part1(blocks: List<String>): Int = blocks.sumOf(::findMirror)
 
-    fun part2(lines: List<String>): Int {
-        return 0
+    fun part2(blocks: List<String>): Int {
+        return blocks.sumOf { findMirror(it, 1) }
     }
 
     val part1Example = part1(exampleBlocks)
@@ -61,7 +67,7 @@ fun main() {
     println("Part 1 took $timePart1")
 
     val part2Example = part2(exampleBlocks)
-    check(part2Example == 0) { -> "Part 2 example failed: Expected 0, received $part2Example" };
+    check(part2Example == 400) { -> "Part 2 example failed: Expected 400, received $part2Example" };
 
     val timePart2 = measureTime { part2(blocks).println() }
     println("Part 2 took $timePart2")
