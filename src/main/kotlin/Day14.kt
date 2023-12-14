@@ -1,6 +1,6 @@
 import kotlin.time.measureTime
 
-fun roll(lines: List<String>, direction: Dir): List<String> {
+fun rollLines(lines: List<String>, direction: Dir): List<String> {
     return when (direction) {
         Dir.West -> lines.map { l ->
             l.split("#").joinToString("#") { it.filter { c -> c == 'O' } + it.filter { c -> c == '.' } }
@@ -10,9 +10,30 @@ fun roll(lines: List<String>, direction: Dir): List<String> {
             l.split("#").joinToString("#") { it.filter { c -> c == '.' } + it.filter { c -> c == 'O' } }
         }
 
-        Dir.North -> pivotToCols(roll(pivotToCols(lines), Dir.West))
-        Dir.South -> pivotToCols(roll(pivotToCols(lines), Dir.East))
+        Dir.North -> pivotToCols(rollLines(pivotToCols(lines), Dir.West))
+        Dir.South -> pivotToCols(rollLines(pivotToCols(lines), Dir.East))
     }
+}
+
+fun List<String>.roll(dir: Dir) = rollLines(this, dir)
+
+fun spin(lines: List<String>, times: Int): List<String> {
+    val seenStates = mutableMapOf<String, Int>();
+    seenStates[lines.joinToString("")] = 0;
+    var currentLines = lines;
+    for (i in 1..times) {
+        val newLines = currentLines.roll(Dir.North).roll(Dir.West).roll(Dir.South).roll(Dir.East)
+
+        val prevCycle = seenStates[newLines.joinToString("")]
+        if (prevCycle != null) {
+            val remainingTimes = (times - prevCycle).mod(i - prevCycle)
+            return spin(newLines, remainingTimes)
+        }
+
+        currentLines = newLines
+        seenStates[currentLines.joinToString("")] = i
+    }
+    return currentLines
 }
 
 fun calcLoad(lines: List<String>): Int {
@@ -24,11 +45,11 @@ fun main() {
     val lines = readLines("day14")
 
     fun part1(lines: List<String>): Int {
-        return calcLoad(roll(lines, Dir.North))
+        return calcLoad(lines.roll(Dir.North))
     }
 
     fun part2(lines: List<String>): Int {
-        return 0
+        return calcLoad(spin(lines, 1000000000))
     }
 
     val part1Example = part1(exampleLines)
@@ -38,7 +59,7 @@ fun main() {
     println("Part 1 took $timePart1")
 
     val part2Example = part2(exampleLines)
-    check(part2Example == 0) { -> "Part 2 example failed: Expected 0, received $part2Example" };
+    check(part2Example == 64) { -> "Part 2 example failed: Expected 64, received $part2Example" };
 
     val timePart2 = measureTime { part2(lines).println() }
     println("Part 2 took $timePart2")
