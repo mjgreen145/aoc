@@ -1,10 +1,6 @@
 import java.lang.Exception
 import kotlin.time.measureTime
 
-fun getCols(lines: List<String>): List<String> {
-    return lines.first().mapIndexed { i, _ -> lines.map { it[i] }.joinToString("") }
-}
-
 fun editDistance(str1: String, str2: String): Int {
     return str1.mapIndexed { index, c -> c != str2[index] }.count { it }
 }
@@ -16,7 +12,7 @@ fun findMirror(block: String, smudgesAllowed: Int = 0): Int {
         return horizontalMatch * 100
     }
 
-    val verticalMatch = findReflectionIndex(getCols(lines), smudgesAllowed)
+    val verticalMatch = findReflectionIndex(pivotToCols(lines), smudgesAllowed)
     if (verticalMatch != null) {
         return verticalMatch
     }

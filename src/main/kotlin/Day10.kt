@@ -1,10 +1,6 @@
 import java.io.File
 import kotlin.time.measureTime
 
-enum class Dir {
-    North, South, East, West
-}
-
 enum class Turn {
     Left, Right
 }
