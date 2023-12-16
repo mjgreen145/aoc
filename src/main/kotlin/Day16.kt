@@ -60,52 +60,59 @@ fun getNextTiles(tile: Pair<Coord, Dir>, grid: Grid): List<Pair<Coord, Dir>> {
     }
 }
 
+fun energize(grid: Grid, start: Pair<Coord, Dir>): Set<Coord> {
+    val seenTiles = mutableSetOf<Pair<Coord, Dir>>()
+    val tilesToProcess = mutableListOf(start)
+
+    while (tilesToProcess.isNotEmpty()) {
+        val tile = tilesToProcess.removeAt(0)
+        seenTiles.add(tile)
+
+        val nextTiles = getNextTiles(tile, grid)
+        nextTiles.forEach { nextTile ->
+            if (!seenTiles.contains(nextTile)) {
+                tilesToProcess.add(nextTile)
+            }
+        }
+    }
+
+    return seenTiles.map { t -> t.first }.toSet()
+}
+
 fun main() {
     val exampleGrid = readLines("day16-example")
     val grid = readLines("day16")
 
     fun part1(grid: Grid): Int {
-        val seenTiles = mutableSetOf<Pair<Coord, Dir>>()
         val start = Pair(Pair(0, 0), Dir.East)
-        val tilesToProcess = mutableListOf(start)
-
-        val seenTilesPerStep = mutableListOf<Set<Pair<Coord, Dir>>>()
-        while (tilesToProcess.isNotEmpty()) {
-            seenTilesPerStep.add(seenTiles.toSet())
-            val tile = tilesToProcess.removeAt(0)
-            seenTiles.add(tile)
-
-            val nextTiles = getNextTiles(tile, grid)
-            nextTiles.forEach { nextTile ->
-                if (!seenTiles.contains(nextTile)) {
-                    tilesToProcess.add(nextTile)
-                }
-            }
-        }
-
-        val seenCoords = seenTiles.map { t -> t.first }.toSet()
-        return seenCoords.size
+        return energize(grid, start).size
     }
 
-    fun part2(lines: List<String>): Int {
-        return 0
+    fun part2(grid: Grid): Int {
+        val maxX = grid[0].length - 1
+        val maxY = grid.size - 1;
+
+        return arrayOf(
+            Array(maxX) { x -> Pair(Pair(x, 0), Dir.South) },
+            Array(maxX) { x -> Pair(Pair(x, maxY), Dir.North) },
+            Array(maxY) { y -> Pair(Pair(0, y), Dir.East) },
+            Array(maxY) { y -> Pair(Pair(maxX, y), Dir.West) },
+        ).flatten().maxOf { start -> energize(grid, start).size }
     }
 
     val part1Example = part1(exampleGrid)
     check(part1Example == 46) { -> "Part 1 example failed: Expected 46, received $part1Example" };
+    val part2Example = part2(exampleGrid)
+    check(part2Example == 51) { -> "Part 2 example failed: Expected 51, received $part2Example" };
 
     val timePart1 = measureTime { part1(grid).println() }
-    println("Part 1 took $timePart1")
-
-    val part2Example = part2(exampleGrid)
-    check(part2Example == 0) { -> "Part 2 example failed: Expected 0, received $part2Example" };
-
     val timePart2 = measureTime { part2(grid).println() }
+
+    println("Part 1 took $timePart1")
     println("Part 2 took $timePart2")
 }
 
 fun writeDebugDay16(grid: Grid, seenTilesList: List<Set<Pair<Coord, Dir>>>) {
-    println("writing debug")
     val html = """
 <!DOCTYPE html>
 <html lang='en'>
@@ -190,7 +197,6 @@ fun writeDebugDay16(grid: Grid, seenTilesList: List<Set<Pair<Coord, Dir>>>) {
     <button onClick="document.body.classList.add('play')">Go!</button>
     ${
         seenTilesList.mapIndexed { i, seenTiles ->
-            println("Grid ${i+1} of ${seenTilesList.size}")
             val delay = 0.25 * i;
             "<div class=\"grid\" style=\"transition-delay: ${delay}s;\">${generateGridHTML(grid, seenTiles)}</div>"
         }.joinToString("")
@@ -209,11 +215,11 @@ fun generateGridHTML(grid: Grid, seenTiles: Set<Pair<Coord, Dir>>): String {
             val isLit = seenCoords.contains(Pair(x, y))
             val tilesForCoord = seenTiles.filter { (c, _) -> c == Pair(x, y) }
             val charToWrite = if (char == '.') {
-              when (tilesForCoord.size) {
-                  0 -> '.'
-                  1 -> charForDir(tilesForCoord.first().second)
-                  else -> tilesForCoord.size.toString().first()
-              }
+                when (tilesForCoord.size) {
+                    0 -> '.'
+                    1 -> charForDir(tilesForCoord.first().second)
+                    else -> tilesForCoord.size.toString().first()
+                }
             } else char
 
             val classes = listOfNotNull(
