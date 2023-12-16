@@ -1,4 +1,3 @@
-import java.io.File
 import kotlin.time.measureTime
 
 typealias Grid = List<String>
