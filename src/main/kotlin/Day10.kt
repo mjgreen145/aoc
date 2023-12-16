@@ -14,12 +14,10 @@ fun inverseDir(dir: Dir): Dir {
     }
 }
 
-typealias Coord = Pair<Int, Int>
-
 data class Pipe(val dirs: List<Dir>, val isStart: Boolean, val coord: Coord, val char: Char)
-typealias Grid = List<List<Pipe>>
+typealias PipeGrid = List<List<Pipe>>
 
-fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
+fun parseGrid(lines: List<String>): Pair<PipeGrid, Pipe?> {
     var startPipe = Pipe(listOf(), true, Pair(0, 0), 'S');
     val grid = lines.mapIndexed { y, line ->
         line.mapIndexed { x, char ->
@@ -59,7 +57,7 @@ fun parseGrid(lines: List<String>): Pair<Grid, Pipe?> {
 val clockwiseDirs = listOf(Dir.North, Dir.East, Dir.South, Dir.West)
 
 tailrec fun walk(
-    grid: Grid,
+    grid: PipeGrid,
     current: Pipe,
     currentDir: Dir,
     prevPipes: MutableList<Pair<Pipe, Turn?>>
@@ -86,7 +84,7 @@ tailrec fun walk(
 }
 
 fun addContainedCoords(
-    grid: Grid,
+    grid: PipeGrid,
     path: List<Pair<Pipe, Turn?>>,
     pathCoords: Set<Coord>,
     pathIsClockwise: Boolean,
@@ -110,7 +108,7 @@ fun addContainedCoords(
 }
 
 tailrec fun getContainedCoords(
-    grid: Grid,
+    grid: PipeGrid,
     path: List<Pair<Pipe, Turn?>>,
     pathCoords: Set<Coord>,
     pathIsClockwise: Boolean,
@@ -167,7 +165,7 @@ fun main() {
         val containedCoords =
             getContainedCoords(grid, path, pathCoords, pathIsClockwise, dirToWalk, mutableSetOf())
 
-        writeDebug(grid, pathCoords, containedCoords);
+        writeDebugDay10(grid, pathCoords, containedCoords);
 
         return containedCoords.size
     }
@@ -185,7 +183,7 @@ fun main() {
     println("Part 2 took $timePart2")
 }
 
-fun writeDebug(grid: Grid, pathCoords: Set<Coord>, containedCoords: Set<Coord>) {
+fun writeDebugDay10(grid: PipeGrid, pathCoords: Set<Coord>, containedCoords: Set<Coord>) {
     val html = """
 <!DOCTYPE html>
 <html lang='en'>
@@ -239,5 +237,5 @@ fun writeDebug(grid: Grid, pathCoords: Set<Coord>, containedCoords: Set<Coord>) 
 </html>
     """.trimIndent()
 
-    File("./debug.html").writeText(html)
+    File("./debug-day10.html").writeText(html)
 }
