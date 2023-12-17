@@ -1,3 +1,5 @@
+import java.lang.Exception
+import kotlin.math.max
 import kotlin.time.measureTime
 
 typealias HeatGrid = List<List<Int>>
@@ -15,7 +17,7 @@ fun adjacentCoords(grid: HeatGrid, currentCoord: Coord): List<Coord> {
     )
 }
 
-fun getNextCoords(grid: HeatGrid, currentCoord: Coord, currentPath: Array<Coord>): List<Coord> {
+fun getNextCoords(grid: HeatGrid, currentCoord: Coord, currentPath: List<Coord>): List<Coord> {
     val last4 = currentPath.take(4)
     val nextOptions = adjacentCoords(grid, currentCoord)
 
@@ -36,23 +38,23 @@ fun hasTurn(coords: Array<Coord>): Boolean {
     return xs.size > 1 && ys.size > 1
 }
 
-fun getAllCoordOptions(size: Int): MutableList<Pair<Coord, Array<Coord>>> {
-    val coordsToProcess = mutableListOf<Pair<Coord, Array<Coord>>>();
+fun getAllCoordOptions(size: Int): MutableList<Pair<Coord, List<Coord>>> {
+    val coordsToProcess = mutableListOf<Pair<Coord, List<Coord>>>();
     for (x in 0..<size) {
         for (y in 0..<size) {
             listOf(
-                Pair(Coord(x, y), arrayOf(Coord(x - 1, y))),
-                Pair(Coord(x, y), arrayOf(Coord(x + 1, y))),
-                Pair(Coord(x, y), arrayOf(Coord(x, y - 1))),
-                Pair(Coord(x, y), arrayOf(Coord(x, y + 1))),
-                Pair(Coord(x, y), arrayOf(Coord(x - 2, y), Coord(x - 1, y))),
-                Pair(Coord(x, y), arrayOf(Coord(x + 2, y), Coord(x + 1, y))),
-                Pair(Coord(x, y), arrayOf(Coord(x, y - 2), Coord(x, y - 1))),
-                Pair(Coord(x, y), arrayOf(Coord(x, y + 2), Coord(x, y + 1))),
-                Pair(Coord(x, y), arrayOf(Coord(x - 3, y), Coord(x - 2, y), Coord(x - 1, y))),
-                Pair(Coord(x, y), arrayOf(Coord(x + 3, y), Coord(x + 2, y), Coord(x + 1, y))),
-                Pair(Coord(x, y), arrayOf(Coord(x, y - 3), Coord(x, y - 2), Coord(x, y - 1))),
-                Pair(Coord(x, y), arrayOf(Coord(x, y + 3), Coord(x, y + 2), Coord(x, y + 1))),
+                Pair(Coord(x, y), listOf(Coord(x - 1, y))),
+                Pair(Coord(x, y), listOf(Coord(x + 1, y))),
+                Pair(Coord(x, y), listOf(Coord(x, y - 1))),
+                Pair(Coord(x, y), listOf(Coord(x, y + 1))),
+                Pair(Coord(x, y), listOf(Coord(x - 2, y), Coord(x - 1, y))),
+                Pair(Coord(x, y), listOf(Coord(x + 2, y), Coord(x + 1, y))),
+                Pair(Coord(x, y), listOf(Coord(x, y - 2), Coord(x, y - 1))),
+                Pair(Coord(x, y), listOf(Coord(x, y + 2), Coord(x, y + 1))),
+                Pair(Coord(x, y), listOf(Coord(x - 3, y), Coord(x - 2, y), Coord(x - 1, y))),
+                Pair(Coord(x, y), listOf(Coord(x + 3, y), Coord(x + 2, y), Coord(x + 1, y))),
+                Pair(Coord(x, y), listOf(Coord(x, y - 3), Coord(x, y - 2), Coord(x, y - 1))),
+                Pair(Coord(x, y), listOf(Coord(x, y + 3), Coord(x, y + 2), Coord(x, y + 1))),
             ).filterNot { (_, prevCoords) ->
                 prevCoords.any { (x, y) -> x < 0 || y < 0 || x >= size || y >= size }
             }.forEach { coordsToProcess.add(it) }
@@ -61,38 +63,69 @@ fun getAllCoordOptions(size: Int): MutableList<Pair<Coord, Array<Coord>>> {
     return coordsToProcess;
 }
 
+fun getNextNode(
+    distsByNum: Map<Int, MutableList<Pair<Coord, List<Coord>>>>,
+    visited: Set<Pair<Coord, List<Coord>>>,
+    highestChecked: Int
+): Pair<Pair<Coord, List<Coord>>, Int> {
+    distsByNum.keys.filter { int -> int >= highestChecked }.sorted().forEach { int ->
+        val result = distsByNum[int]!!.find { !visited.contains(it) }
+        if (result != null) {
+            return Pair(result, int)
+        }
+    }
+    throw Exception("Failed to find")
+}
+
 fun dijkstra(grid: HeatGrid, start: Coord, end: Coord): Int {
     val coordsToProcess = getAllCoordOptions(grid.size);
-    coordsToProcess.add(Pair(start, arrayOf()))
+    coordsToProcess.add(Pair(start, listOf()))
 
-    val visited = mutableSetOf<Pair<Coord, Array<Coord>>>()
+    val visited = mutableSetOf<Pair<Coord, List<Coord>>>()
 
     val dists = mutableMapOf<Coord, MutableMap<List<Coord>, Int>>()
+    val distsByNum = mutableMapOf<Int, MutableList<Pair<Coord, List<Coord>>>>()
     for ((coord, arr) in coordsToProcess) {
         dists[coord] = (dists[coord] ?: mutableMapOf())
         dists[coord]!![arr.toList()] = Int.MAX_VALUE
+
+        distsByNum[Int.MAX_VALUE] = (distsByNum[Int.MAX_VALUE] ?: mutableListOf())
+        distsByNum[Int.MAX_VALUE]!!.addLast(Pair(coord, arr.toList()))
     }
     dists[start]!![listOf()] = 0
+    distsByNum[0] = mutableListOf(Pair(start, listOf()))
+
+    var highestChecked = 0
 
     while (coordsToProcess.isNotEmpty()) {
         if (coordsToProcess.size % 1000 == 0) {
             coordsToProcess.size.println()
         }
-        val current =
-            coordsToProcess.filter { !visited.contains(it) }.sortedBy { (c, arr) -> dists[c]!![arr.toList()] }.first()
+//        val current =
+//            coordsToProcess.filter { !visited.contains(it) }.sortedBy { (c, arr) -> dists[c]!![arr.toList()] }.first()
+        val (current, num) = getNextNode(distsByNum, visited, highestChecked)
+        highestChecked = max(highestChecked, num);
         val (currentCoord, prevStraightPath) = current
+
         coordsToProcess.remove(current)
         visited.add(current)
 
         val adjacent = getNextCoords(grid, currentCoord, prevStraightPath)
         for (nextCoord in adjacent) {
-            val nextPath = if (hasTurn(arrayOf(*prevStraightPath, currentCoord, nextCoord))) {
+            val nextPath = if (hasTurn(arrayOf(*prevStraightPath.toTypedArray(), currentCoord, nextCoord))) {
                 listOf(currentCoord)
             } else {
-                arrayOf(*prevStraightPath, currentCoord).toList()
+                arrayOf(*prevStraightPath.toTypedArray(), currentCoord).toList()
             }
-            if (dists[currentCoord]!![prevStraightPath.toList()]!! + grid.get(nextCoord) < dists[nextCoord]!![nextPath]!!) {
-                dists[nextCoord]!![nextPath] = dists[currentCoord]!![prevStraightPath.toList()]!! + grid.get(nextCoord)
+            val nextTotal = dists[currentCoord]!![prevStraightPath.toList()]!! + grid.get(nextCoord)
+            val currentTotal = dists[nextCoord]!![nextPath]!!
+            if (nextTotal < currentTotal) {
+                dists[nextCoord]!![nextPath] = nextTotal
+
+                distsByNum[nextTotal] = (distsByNum[nextTotal] ?: mutableListOf())
+                distsByNum[nextTotal]!!.add(Pair(nextCoord, nextPath))
+
+                distsByNum[currentTotal]!!.remove(Pair(nextCoord, nextPath))
             }
         }
     }
