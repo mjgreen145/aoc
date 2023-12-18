@@ -1,4 +1,4 @@
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.time.measureTime
 
 fun getNextCoord(current: Coord, dir: String, distance: Int): Coord {
@@ -12,13 +12,13 @@ fun getNextCoord(current: Coord, dir: String, distance: Int): Coord {
 }
 
 fun internalArea(pathVertices: List<Coord>, pathLength: Long): Long {
-    val area = abs(pathVertices.indices.fold(0L) { acc, i ->
+    val area = pathVertices.indices.fold(0L) { acc, i ->
         val p1 = pathVertices[i]
         val p2 = if (i + 1 == pathVertices.size) pathVertices[0] else pathVertices[i + 1]
 
         acc + ((p1.x().toLong() * p2.y().toLong()) - (p1.y().toLong() * p2.x().toLong()))
-    }) / 2 // Gauss
-    return area - (pathLength / 2) + 1 // Pick theorem
+    }.absoluteValue / 2
+    return area - (pathLength / 2) + 1
 }
 
 fun getTotalArea(instructions: List<Pair<String, Int>>): Long {
