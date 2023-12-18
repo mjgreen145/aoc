@@ -17,3 +17,5 @@ fun pivotToCols(lines: List<String>): List<String> {
 }
 
 typealias Coord = Pair<Int, Int>
+fun Coord.x(): Int = this.first
+fun Coord.y(): Int = this.second
