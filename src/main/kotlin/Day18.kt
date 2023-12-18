@@ -12,11 +12,11 @@ fun getNextCoord(current: Coord, dir: String, distance: Int): Coord {
 }
 
 fun internalArea(pathVertices: List<Coord>, pathLength: Long): Long {
-    val area = abs(pathVertices.indices.fold(0) { acc, i ->
+    val area = abs(pathVertices.indices.fold(0L) { acc, i ->
         val p1 = pathVertices[i]
         val p2 = if (i + 1 == pathVertices.size) pathVertices[0] else pathVertices[i + 1]
 
-        acc + ((p1.x() * p2.y()) - (p1.y() * p2.x()))
+        acc + ((p1.x().toLong() * p2.y().toLong()) - (p1.y().toLong() * p2.x().toLong()))
     }) / 2 // Gauss
     return area - (pathLength / 2) + 1 // Pick theorem
 }
@@ -49,15 +49,23 @@ fun main() {
         return getTotalArea(instructions)
     }
 
-    fun part2(lines: List<String>): Int {
-        return 0
+    fun part2(lines: List<String>): Long {
+        val dirs = arrayOf("R", "D", "L", "U")
+        val instructions = lines.map { line ->
+            val hexCode = line.substringAfter("#").substring(0..<6)
+            val dir = dirs[(hexCode.last().toString().toInt())]
+            val distance = hexCode.take(5).toInt(radix = 16)
+            Pair(dir, distance)
+        }
+
+        return getTotalArea(instructions)
     }
 
     val part1Example = part1(exampleLines)
     val part2Example = part2(exampleLines)
 
     check(part1Example == 62L) { -> "Part 1 example failed: Expected 62, received $part1Example" };
-    check(part2Example == 0) { -> "Part 2 example failed: Expected 0, received $part2Example" };
+    check(part2Example == 952408144115L) { -> "Part 2 example failed: Expected 952408144115, received $part2Example" };
 
     val timePart1 = measureTime { part1(lines).println() }
     val timePart2 = measureTime { part2(lines).println() }
