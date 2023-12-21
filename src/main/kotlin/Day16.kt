@@ -1,9 +1,5 @@
 import kotlin.time.measureTime
 
-typealias Grid = List<String>
-
-fun Grid.get(x: Int, y: Int): Char = this[y][x]
-
 fun nextCoord(coord: Coord, dir: Dir, grid: Grid): Coord? {
     val (x, y) = coord
     return when (dir) {
