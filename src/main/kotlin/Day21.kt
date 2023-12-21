@@ -8,7 +8,7 @@ fun findStart(grid: Grid): Coord {
     return Coord(x, y)
 }
 
-fun getReachableCoords(grid: Grid, start: Coord, stepLimit: Int): Map<Coord, Int> {
+fun getReachableCoords(grid: Grid, start: Coord): Map<Coord, Int> {
     val seenCoords = mutableMapOf<Coord, Int>()
     val coordsToProcess: Queue<Pair<Coord, Int>> = LinkedList()
     coordsToProcess.add(Pair(start, 0))
@@ -20,16 +20,14 @@ fun getReachableCoords(grid: Grid, start: Coord, stepLimit: Int): Map<Coord, Int
         }
 
         seenCoords[coord] = stepsTaken
-        if (stepsTaken < stepLimit) {
-            adjacentCoords(grid, coord)
-                .filter { grid.get(it) != '#' }
-                .forEach { nextCoord ->
-                    val currentStepsToNext = seenCoords[nextCoord]
-                    if (currentStepsToNext == null || stepsTaken + 1 < currentStepsToNext) {
-                        coordsToProcess.add(Pair(nextCoord, stepsTaken + 1))
-                    }
+        adjacentCoords(grid, coord)
+            .filter { grid.get(it) != '#' }
+            .forEach { nextCoord ->
+                val currentStepsToNext = seenCoords[nextCoord]
+                if (currentStepsToNext == null || stepsTaken + 1 < currentStepsToNext) {
+                    coordsToProcess.add(Pair(nextCoord, stepsTaken + 1))
                 }
-        }
+            }
     }
 
     return seenCoords
@@ -41,8 +39,8 @@ fun main() {
 
     fun part1(grid: Grid, stepLimit: Int): Int {
         val start = findStart(grid)
-        val reachableCoords = getReachableCoords(grid, start, stepLimit)
-        return reachableCoords.values.count { steps -> steps % 2 == stepLimit % 2 }
+        val reachableCoords = getReachableCoords(grid, start)
+        return reachableCoords.values.count { steps -> steps <= stepLimit && steps % 2 == stepLimit % 2 }
     }
 
     fun part2(lines: List<String>): Int {
