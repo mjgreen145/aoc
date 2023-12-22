@@ -36,6 +36,16 @@ fun sumIntsTo(int: Long): Long {
     return int * (int + 1) / 2
 }
 
+fun sumEvensTo(int: Long): Long {
+    val numsToSum = int / 2
+    return numsToSum * (numsToSum + 1)
+}
+
+fun sumOddsTo(int: Long): Long {
+    val numsToSum = int / 2
+    return numsToSum * numsToSum
+}
+
 fun main() {
     val exampleLines = readLines("day21-example")
     val lines = readLines("day21")
@@ -64,16 +74,21 @@ fun main() {
 
         val numFullSidesWalkable = stepLimit / gridSize
         val remainderSteps = stepLimit % gridSize
-        val numFullGrids = sumIntsTo(numFullSidesWalkable - 1)
 
         val totalReachable = corners.sumOf { corner ->
             val allCoords = getReachableCoords(offsetGrid, corner)
-            val reachableFull = allCoords.values.count { steps -> steps % 2 == 1 }
+            val reachableFullOdd = allCoords.values.count { steps -> steps % 2 == 1 }
+            val reachableFullEven = allCoords.values.count { steps -> steps % 2 == 0 }
             val reachableRemainder1 =
-                allCoords.values.count { steps -> steps <= remainderSteps + gridSize && steps % 2 == 1 }
+                allCoords.values.count { steps -> steps <= (remainderSteps + gridSize) && steps % 2 == 0 }
             val reachableRemainder2 = allCoords.values.count { steps -> steps <= remainderSteps && steps % 2 == 1 }
 
-            (reachableFull * numFullGrids) + (numFullSidesWalkable * reachableRemainder1) + ((numFullSidesWalkable + 1) * reachableRemainder2)
+            listOf(
+                reachableFullOdd * sumOddsTo(numFullSidesWalkable - 1),
+                reachableFullEven * sumEvensTo(numFullSidesWalkable - 1),
+                numFullSidesWalkable * reachableRemainder1,
+                (numFullSidesWalkable + 1) * reachableRemainder2
+            ).sum()
         }
 
         // Account for double counting sides
@@ -91,7 +106,8 @@ fun main() {
     println("Part 2 took $timePart2")
 
     // 630165203396840 too high
-    // 616665249602669 Nope
+    // 619360275262605 nope
+    // 616665249602669 nope
     // 616659910294840 too low
     // 608638607266640 too low
 }
