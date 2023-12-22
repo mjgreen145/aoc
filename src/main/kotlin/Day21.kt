@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.math.min
 import kotlin.time.measureTime
 
 fun findStart(grid: Grid): Coord {
@@ -33,6 +32,10 @@ fun getReachableCoords(grid: Grid, start: Coord): Map<Coord, Int> {
     return seenCoords
 }
 
+fun sumIntsTo(int: Long): Long {
+    return int * (int + 1) / 2
+}
+
 fun main() {
     val exampleLines = readLines("day21-example")
     val lines = readLines("day21")
@@ -43,19 +46,52 @@ fun main() {
         return reachableCoords.values.count { steps -> steps <= stepLimit && steps % 2 == stepLimit % 2 }
     }
 
-    fun part2(lines: List<String>): Int {
-        return 0
+    fun part2(grid: Grid, stepLimit: Long): Long {
+        val gridSize = grid.size
+        val (x, y) = findStart(grid)
+        val offsetGrid = (
+                grid.subList(y, gridSize).map { line -> line.substring(x) + line.substring(0, x) }.toTypedArray() +
+                        grid.subList(0, y).map { line -> line.substring(x) + line.substring(0, x) }
+                            .toTypedArray()
+                ).toList()
+
+        val corners = listOf(
+            Coord(0, 0),
+            Coord(0, offsetGrid.size - 1),
+            Coord(offsetGrid[0].length - 1, 0),
+            Coord(offsetGrid[0].length - 1, offsetGrid.size - 1)
+        )
+
+        val numFullSidesWalkable = stepLimit / gridSize
+        val remainderSteps = stepLimit % gridSize
+        val numFullGrids = sumIntsTo(numFullSidesWalkable - 1)
+
+        val totalReachable = corners.sumOf { corner ->
+            val allCoords = getReachableCoords(offsetGrid, corner)
+            val reachableFull = allCoords.values.count { steps -> steps % 2 == 1 }
+            val reachableRemainder1 =
+                allCoords.values.count { steps -> steps <= remainderSteps + gridSize && steps % 2 == 1 }
+            val reachableRemainder2 = allCoords.values.count { steps -> steps <= remainderSteps && steps % 2 == 1 }
+
+            (reachableFull * numFullGrids) + (numFullSidesWalkable * reachableRemainder1) + ((numFullSidesWalkable + 1) * reachableRemainder2)
+        }
+
+        // Account for double counting sides
+        return totalReachable - (stepLimit * 4)
     }
 
     val part1Example = part1(exampleLines, 6)
-    val part2Example = part2(exampleLines)
 
     check(part1Example == 16) { -> "Part 1 example failed: Expected 16, received $part1Example" };
-    check(part2Example == 0) { -> "Part 2 example failed: Expected 0, received $part2Example" };
 
     val timePart1 = measureTime { part1(lines, 64).println() }
-    val timePart2 = measureTime { part2(lines).println() }
+    val timePart2 = measureTime { part2(lines, 26501365L).println() }
 
     println("Part 1 took $timePart1")
     println("Part 2 took $timePart2")
+
+    // 630165203396840 too high
+    // 616665249602669 Nope
+    // 616659910294840 too low
+    // 608638607266640 too low
 }
