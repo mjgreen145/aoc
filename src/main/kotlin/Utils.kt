@@ -28,9 +28,9 @@ fun Grid.get(coord: Coord): Char = this.get(coord.x(), coord.y())
 fun adjacentCoords(grid: Grid, currentCoord: Coord): List<Coord> {
     val (x, y) = currentCoord
     return listOfNotNull(
-        if (y > 0) Pair(x, y - 1) else null,
-        if (y < grid.size - 1) Pair(x, y + 1) else null,
-        if (x > 0) Pair(x - 1, y) else null,
-        if (x < grid[0].length - 1) Pair(x + 1, y) else null,
+        if (y > 0) Coord(x, y - 1) else null,
+        if (y < grid.size - 1) Coord(x, y + 1) else null,
+        if (x > 0) Coord(x - 1, y) else null,
+        if (x < grid[0].length - 1) Coord(x + 1, y) else null,
     )
 }
