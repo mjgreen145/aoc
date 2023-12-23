@@ -46,6 +46,36 @@ fun sumOddsTo(int: Long): Long {
     return numsToSum * numsToSum
 }
 
+fun getOffsetGrids(grid: Grid): List<Grid> {
+    val start = findStart(grid)
+    val (x, y) = start
+    val topRight = (
+            grid.subList(y + 1, grid.size).map { line -> line.substring(x) + line.substring(0, x) }.toTypedArray() +
+                    grid.subList(0, y + 1).map { line -> line.substring(x) + line.substring(0, x) }.toTypedArray()
+            )
+
+    val topLeft = (
+            grid.subList(y + 1, grid.size).map { line -> line.substring(x + 1) + line.substring(0, x + 1) }
+                .toTypedArray() +
+                    grid.subList(0, y + 1).map { line -> line.substring(x + 1) + line.substring(0, x + 1) }
+                        .toTypedArray()
+            )
+
+    val bottomLeft = (
+            grid.subList(y, grid.size).map { line -> line.substring(x + 1) + line.substring(0, x + 1) }
+                .toTypedArray() +
+                    grid.subList(0, y).map { line -> line.substring(x + 1) + line.substring(0, x + 1) }
+                        .toTypedArray()
+            )
+
+    val bottomRight = (
+            grid.subList(y, grid.size).map { line -> line.substring(x) + line.substring(0, x) }.toTypedArray() +
+                    grid.subList(0, y).map { line -> line.substring(x) + line.substring(0, x) }.toTypedArray()
+            )
+
+    return listOf(topLeft, topRight, bottomLeft, bottomRight).map { it.toList() }
+}
+
 fun main() {
     val exampleLines = readLines("day21-example")
     val lines = readLines("day21")
@@ -58,25 +88,13 @@ fun main() {
 
     fun part2(grid: Grid, stepLimit: Long): Long {
         val gridSize = grid.size
-        val (x, y) = findStart(grid)
-        val offsetGrid = (
-                grid.subList(y, gridSize).map { line -> line.substring(x) + line.substring(0, x) }.toTypedArray() +
-                        grid.subList(0, y).map { line -> line.substring(x) + line.substring(0, x) }
-                            .toTypedArray()
-                ).toList()
-
-        val corners = listOf(
-            Coord(0, 0),
-            Coord(0, offsetGrid.size - 1),
-            Coord(offsetGrid[0].length - 1, 0),
-            Coord(offsetGrid[0].length - 1, offsetGrid.size - 1)
-        )
-
         val numFullSidesWalkable = stepLimit / gridSize
         val remainderSteps = stepLimit % gridSize
 
-        val totalReachable = corners.sumOf { corner ->
-            val allCoords = getReachableCoords(offsetGrid, corner)
+        val totalReachable = getOffsetGrids(grid).sumOf { offsetGrid ->
+            val start = findStart(offsetGrid)
+            val allCoords = getReachableCoords(offsetGrid, start)
+            allCoords.values.max().println()
             val reachableFullOdd = allCoords.values.count { steps -> steps % 2 == 1 }
             val reachableFullEven = allCoords.values.count { steps -> steps % 2 == 0 }
             val reachableRemainder1 =
@@ -106,6 +124,7 @@ fun main() {
     println("Part 2 took $timePart2")
 
     // 630165203396840 too high
+    // 619380710900756 nope
     // 619360275262605 nope
     // 616665249602669 nope
     // 616659910294840 too low
