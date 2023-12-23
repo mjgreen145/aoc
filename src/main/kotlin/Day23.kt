@@ -1,7 +1,6 @@
-import java.util.*
 import kotlin.time.measureTime
 
-typealias Path = List<Coord>
+typealias Path = MutableList<Coord>
 
 fun mazeStart(grid: Grid): Coord {
     return Coord(grid[0].indexOf('.'), 0)
@@ -25,31 +24,63 @@ fun validNestStepsNoSlopes(grid: Grid, coord: Coord): List<Coord> {
     return adjacentCoords(grid, coord).filter { grid.get(it) != '#' }
 }
 
-fun longestHike(grid: Grid, getValidSteps: (grid: Grid, coord: Coord) -> List<Coord>): Int {
+typealias Graph = Map<Coord, Set<Pair<Coord, Int>>>
+
+fun buildMazeGraph(grid: Grid, getValidSteps: (grid: Grid, coord: Coord) -> List<Coord>): Graph {
     val start = mazeStart(grid)
     val end = mazeEnd(grid)
-    val validHikes = mutableListOf<Path>()
-    val pathsToProcess: Queue<Path> = LinkedList()
-    pathsToProcess.add(listOf(start))
+
+    tailrec fun findNextNode(path: Path): Pair<Coord, Int> {
+        val current = path.last()
+        val options = getValidSteps(grid, current).filter { !path.contains(it) }
+        if (current == end || current == start || options.size > 1) {
+            return Pair(current, path.size - 1)
+        }
+        path.addLast(options.first())
+        return findNextNode(path)
+    }
+
+    val graph = mutableMapOf<Coord, MutableSet<Pair<Coord, Int>>>()
+
+    val nodesToProcess = mutableListOf(start)
+
+    while (nodesToProcess.isNotEmpty()) {
+        val node = nodesToProcess.removeFirst()
+        graph[node] = mutableSetOf()
+        val options = getValidSteps(grid, node)
+        for (option in options) {
+            val (nextNode, distance) = findNextNode(mutableListOf(node, option))
+            graph[node]!!.add(Pair(nextNode, distance))
+            if (graph[nextNode] == null && nextNode != end) {
+                nodesToProcess.add(nextNode)
+            }
+        }
+    }
+
+    return graph
+}
+
+fun getAllPaths(graph: Graph, start: Coord, end: Coord): List<Pair<Path, Int>> {
+    val completePaths = mutableListOf<Pair<Path, Int>>()
+    val pathsToProcess = mutableListOf(Pair(mutableListOf(start), 0))
 
     while (pathsToProcess.isNotEmpty()) {
-        val path = pathsToProcess.remove()
-        val currentCoord = path.last()
-        if (currentCoord == end) {
-            validHikes.add(path)
+        val (path, distance) = pathsToProcess.removeFirst()
+        if (path.last() == end) {
+            completePaths.add(Pair(path, distance))
             continue
         }
 
-        getValidSteps(grid, currentCoord)
-            .filter { !path.contains(it) }
-            .forEach { nextCoord ->
+        graph[path.last()]!!
+            .filter { (node, _) -> !path.contains(node) }
+            .forEach { (node, dist) ->
                 val newPath = path.toMutableList()
-                newPath.addLast(nextCoord)
-                pathsToProcess.add(newPath)
+                newPath.addLast(node)
+                pathsToProcess.add(Pair(newPath, distance + dist))
             }
     }
 
-    return validHikes.maxOf { it.size } - 1 // #steps = (#tiles - 1)
+    return completePaths
 }
 
 fun main() {
@@ -57,11 +88,17 @@ fun main() {
     val lines = readLines("day23")
 
     fun part1(grid: Grid): Int {
-        return longestHike(grid, ::validNextStepsWithSlopes)
+        val graph = buildMazeGraph(grid, ::validNextStepsWithSlopes)
+
+        val allPaths = getAllPaths(graph, mazeStart(grid), mazeEnd(grid))
+        return allPaths.maxOf { (_, dist) -> dist }
     }
 
     fun part2(grid: Grid): Int {
-        return longestHike(grid, ::validNestStepsNoSlopes)
+        val graph = buildMazeGraph(grid, ::validNestStepsNoSlopes)
+
+        val allPaths = getAllPaths(graph, mazeStart(grid), mazeEnd(grid))
+        return allPaths.maxOf { (_, dist) -> dist }
     }
 
     val part1Example = part1(exampleLines)
@@ -70,9 +107,12 @@ fun main() {
     check(part1Example == 94) { -> "Part 1 example failed: Expected 94, received $part1Example" };
     check(part2Example == 154) { -> "Part 2 example failed: Expected 154, received $part2Example" };
 
+    println("real")
     val timePart1 = measureTime { part1(lines).println() }
-    val timePart2 = measureTime { part2(lines).println() }
-
     println("Part 1 took $timePart1")
+
+    val timePart2 = measureTime { part2(lines).println() }
     println("Part 2 took $timePart2")
+
+    // 4890 too low
 }
