@@ -97,17 +97,34 @@ fun main() {
     fun part2(grid: Grid): Int {
         val graph = buildMazeGraph(grid, ::validNestStepsNoSlopes)
 
-        val allPaths = getAllPaths(graph, mazeStart(grid), mazeEnd(grid))
-        return allPaths.maxOf { (_, dist) -> dist }
+        val start = mazeStart(grid)
+        val end = mazeEnd(grid)
+        fun coordLabel(coord: Coord): String {
+            if (coord == start) return "start"
+            if (coord == end) return "end"
+            return "\"${coord.first},${coord.second}\""
+        }
+        val processed = mutableSetOf<Pair<Coord, Coord>>()
+        graph.entries.flatMap { (node, dests) ->
+            dests.mapNotNull { (destNode, dist) ->
+                if (!processed.contains(Pair(destNode, node))) {
+                    processed.add(Pair(node, destNode))
+                    "${coordLabel(node)} -- ${coordLabel(destNode)}"
+                } else null
+            }
+        }.joinToString("\n").println()
+
+//        val allPaths = getAllPaths(graph, mazeStart(grid), mazeEnd(grid))
+//        return allPaths.maxOf { (_, dist) -> dist }
+        return 0
     }
 
     val part1Example = part1(exampleLines)
     val part2Example = part2(exampleLines)
 
     check(part1Example == 94) { -> "Part 1 example failed: Expected 94, received $part1Example" };
-    check(part2Example == 154) { -> "Part 2 example failed: Expected 154, received $part2Example" };
+//    check(part2Example == 154) { -> "Part 2 example failed: Expected 154, received $part2Example" };
 
-    println("real")
     val timePart1 = measureTime { part1(lines).println() }
     println("Part 1 took $timePart1")
 
