@@ -1,12 +1,18 @@
 import kotlin.time.measureTime
 
+typealias Vector = Triple<Double, Double, Double>
+
 // Representing the formula ax + by = c
-data class LineFormula(val a: Double, val b: Double, val c: Double, val input: String)
+data class LineFormula(val a: Double, val b: Double, val c: Double)
 data class Hailstone(
-    val formula: LineFormula,
+    val input: String,
+    val formula2D: LineFormula,
     val start: Triple<Double, Double, Double>,
-    val velocity: Triple<Double, Double, Double>
+    val velocity: Vector
 )
+
+// Representing the formula ax + by + cz = d
+data class PlaneFormula(val a: Double, val b: Double, val c: Double, val d: Double)
 
 fun toHailstone(line: String): Hailstone {
     val (start, vector) = line.split(" @ ")
@@ -17,7 +23,8 @@ fun toHailstone(line: String): Hailstone {
     val m = vy / vx
     val c = y - m * x
     return Hailstone(
-        LineFormula(-m, 1.0, c, line),
+        line,
+        LineFormula(-m, 1.0, c),
         Triple(x, y, z),
         Triple(vx, vy, vz),
     )
@@ -69,6 +76,41 @@ fun isInTheFuture2D(hailstone: Hailstone, point: Pair<Double, Double>): Boolean 
     return if (hailstone.velocity.first > 0) (hailstone.start.first < point.first) else (hailstone.start.first > point.first)
 }
 
+fun findParallel3D(hailstones: List<Hailstone>): Pair<Hailstone, Hailstone> {
+    hailstones.forEachIndexed { i, h1 ->
+        hailstones.drop(i + 1).forEach { h2 ->
+            val v1 = h1.velocity
+            val v2 = h2.velocity
+            val ratioX = v1.first / v2.first
+            val ratioY = v1.second / v2.second
+            val ratioZ = v1.third / v2.third
+            if (ratioX == ratioY && ratioX == ratioZ) {
+                return Pair(h1, h2)
+            }
+        }
+    }
+    throw Exception("No hailstones are in parallel")
+}
+
+fun crossProduct(v1: Vector, v2: Vector): Vector {
+    val (a1, a2, a3) = v1
+    val (b1, b2, b3) = v2
+    return Triple(
+        a2 * b3 - a3 * b2,
+        a1 * b3 - a3 * b1,
+        a1 * b2 - a2 * b1,
+    )
+}
+
+fun planeForParallelHailstones(h1: Hailstone, h2: Hailstone): PlaneFormula {
+    val (a, b, c) = crossProduct(h1.velocity, h2.velocity)
+    val (x, y, z) = h1.start
+
+    val d = a * x + b * y + c * z
+
+    return PlaneFormula(a, b, c, d)
+}
+
 fun main() {
     val exampleLines = readLines("day24-example")
     val lines = readLines("day24")
@@ -81,7 +123,7 @@ fun main() {
 
         hailstones.forEachIndexed { i, h1 ->
             hailstones.drop(i + 1).forEach { h2 ->
-                val intersect = getIntersectionPoint(h1.formula, h2.formula)
+                val intersect = getIntersectionPoint(h1.formula2D, h2.formula2D)
                 if (intersect != null &&
                     range.contains(intersect.first) &&
                     range.contains(intersect.second) &&
@@ -96,6 +138,11 @@ fun main() {
     }
 
     fun part2(lines: List<String>): Int {
+        val hailstones = lines.map(::toHailstone)
+        val (h1, h2) = findParallel3D(hailstones)
+
+        val plane = planeForParallelHailstones(h1, h2)
+
         return 0
     }
 
