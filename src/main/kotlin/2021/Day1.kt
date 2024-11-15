@@ -1,8 +1,12 @@
+package `2021`
+
+import println
+import readLines
 import kotlin.time.measureTime
 
 fun main() {
-    val exampleLines = readLines("2024", "day1-example")
-    val lines = readLines("2024", "day1")
+    val exampleLines = readLines("2021", "day1-example")
+    val lines = readLines("2021", "day1")
 
     fun part1(lines: List<String>): Int {
         return 0

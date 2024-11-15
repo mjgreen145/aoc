@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.math.absoluteValue
 import kotlin.time.measureTime
 
@@ -59,8 +63,8 @@ fun sumDistances(lines: List<String>, distanceToExpand: Long): Long {
 }
 
 fun main() {
-    val exampleLines = readLines("day11-example")
-    val lines = readLines("day11")
+    val exampleLines = readLines("2023", "day11-example")
+    val lines = readLines("2023", "day11")
 
     fun part1(lines: List<String>): Long {
         return sumDistances(lines, 2)

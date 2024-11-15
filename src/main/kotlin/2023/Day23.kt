@@ -1,3 +1,11 @@
+package `2023`
+
+import Coord
+import Grid
+import adjacentCoords
+import get
+import println
+import readLines
 import kotlin.time.measureTime
 
 typealias Path = MutableList<Coord>
@@ -84,8 +92,8 @@ fun getAllPaths(graph: Graph, start: Coord, end: Coord): List<Pair<Path, Int>> {
 }
 
 fun main() {
-    val exampleLines = readLines("day23-example")
-    val lines = readLines("day23")
+    val exampleLines = readLines("2023", "day23-example")
+    val lines = readLines("2023", "day23")
 
     fun part1(grid: Grid): Int {
         val graph = buildMazeGraph(grid, ::validNextStepsWithSlopes)

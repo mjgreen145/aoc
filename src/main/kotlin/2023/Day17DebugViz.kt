@@ -1,3 +1,6 @@
+package `2023`
+
+import Coord
 import java.io.File
 
 fun writeVizDay17Debug(grid: HeatGrid, path: List<Coord>) {

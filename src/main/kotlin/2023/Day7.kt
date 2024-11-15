@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.math.pow
 import kotlin.time.measureTime
 
@@ -85,8 +89,8 @@ fun scoreHands(lines: List<String>, cardOrder: List<Char>, classifier: (cards: S
 }
 
 fun main() {
-    val exampleLines = readLines("day7-example")
-    val lines = readLines("day7")
+    val exampleLines = readLines("2023","day7-example")
+    val lines = readLines("2023","day7")
 
     fun part1(lines: List<String>): Int {
         return scoreHands(lines, cardOrder, ::classify);

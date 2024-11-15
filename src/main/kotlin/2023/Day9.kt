@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.time.measureTime
 
 fun diffs(numSeq: List<Int>): List<Int> {
@@ -13,8 +17,8 @@ fun prevNum(numSeq: List<Int>): Int {
 }
 
 fun main() {
-    val exampleSeqs = readLines("day9-example").map { line -> line.split(" ").map { it.toInt() } }
-    val seqs = readLines("day9").map { line -> line.split(" ").map { it.toInt() } }
+    val exampleSeqs = readLines("2023", "day9-example").map { line -> line.split(" ").map { it.toInt() } }
+    val seqs = readLines("2023", "day9").map { line -> line.split(" ").map { it.toInt() } }
 
     fun part1(numSeqs: List<List<Int>>): Int {
         return numSeqs.sumOf(::nextNum)

@@ -1,3 +1,5 @@
+package `2023`
+
 fun main() {
     val text = object {}.javaClass.getResourceAsStream("day1.txt")?.bufferedReader()?.readText()
 

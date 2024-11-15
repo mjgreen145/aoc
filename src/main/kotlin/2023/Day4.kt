@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.math.pow
 import kotlin.time.measureTime
 
@@ -15,7 +19,7 @@ fun numWinningNumbers(line: String): Int {
 }
 
 fun main() {
-    val lines = readLines("day4")
+    val lines = readLines("2023", "day4")
 
     fun part1(lines: List<String>): Int {
         return lines.sumOf { line ->

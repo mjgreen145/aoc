@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readInput
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.measureTime
@@ -67,8 +71,8 @@ fun mapOneLocation(locationMap: LocationMap, ranges: List<LongRange>): List<Long
 }
 
 fun main() {
-    val exampleText = readInput("day5-example")
-    val text = readInput("day5")
+    val exampleText = readInput("2023", "day5-example")
+    val text = readInput("2023", "day5")
 
     fun part1(input: String): Long {
         val seeds = getSeeds(input);

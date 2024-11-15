@@ -1,3 +1,11 @@
+package `2023`
+
+import Coord
+import Dir
+import Grid
+import get
+import println
+import readLines
 import kotlin.time.measureTime
 
 fun nextCoord(coord: Coord, dir: Dir, grid: Grid): Coord? {
@@ -75,8 +83,8 @@ fun energize(grid: Grid, start: Pair<Coord, Dir>): Set<Coord> {
 }
 
 fun main() {
-    val exampleGrid = readLines("day16-example")
-    val grid = readLines("day16")
+    val exampleGrid = readLines("2023", "day16-example")
+    val grid = readLines("2023", "day16")
 
     fun part1(grid: Grid): Int {
         val start = Pair(Pair(0, 0), Dir.East)

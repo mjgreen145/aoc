@@ -1,3 +1,6 @@
+package `2023`
+
+import println
 import java.lang.Exception
 
 data class GameRound(val red: Int, val blue: Int, val green: Int)

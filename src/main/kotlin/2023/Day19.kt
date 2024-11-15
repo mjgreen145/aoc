@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readInput
 import kotlin.time.measureTime
 
 data class MachinePart(val x: Long, val m: Long, val a: Long, val s: Long, val sum: Long = x + m + a + s)
@@ -140,8 +144,8 @@ fun rangeLength(range: LongRange): Long {
 }
 
 fun main() {
-    val exampleLines = readInput("day19-example")
-    val lines = readInput("day19")
+    val exampleLines = readInput("2023", "day19-example")
+    val lines = readInput("2023", "day19")
 
     fun part1(input: String): Long {
         val (parts, workflows) = parseDay19(input)

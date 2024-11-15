@@ -1,3 +1,9 @@
+package `2023`
+
+import Coord
+import println
+import readLines
+
 fun main() {
     val grid = readLines("day17").map { it.map { c -> c.toString().toInt() } }
     val lines = readLines("day17-debug")

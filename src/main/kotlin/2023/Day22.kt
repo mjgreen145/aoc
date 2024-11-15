@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.time.measureTime
 
 typealias Coord3D = Triple<Int, Int, Int>
@@ -23,8 +27,8 @@ fun getBricks(lines: List<String>): List<Brick> {
 }
 
 fun main() {
-    val exampleLines = readLines("day22-example")
-    val lines = readLines("day22")
+    val exampleLines = readLines("2023", "day22-example")
+    val lines = readLines("2023", "day22")
 
     fun part1(lines: List<String>): Int {
         val bricks = getBricks(lines)

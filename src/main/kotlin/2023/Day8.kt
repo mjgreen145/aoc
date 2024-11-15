@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.time.measureTime
 
 data class Node(val left: String, val right: String)
@@ -62,9 +66,9 @@ fun main() {
         return lcmMultiple(stepTotals)
     }
 
-    val exampleLines = readLines("day8-example")
-    val exampleLinesPart2 = readLines("day8-example2")
-    val lines = readLines("day8")
+    val exampleLines = readLines("2023","day8-example")
+    val exampleLinesPart2 = readLines("2023","day8-example2")
+    val lines = readLines("2023","day8")
 
     val part1Example = part1(exampleLines)
     check(part1Example == 2) { -> "Part 1 example failed: Expected 2, received $part1Example" };

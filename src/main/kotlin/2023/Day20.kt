@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import java.util.*
 import kotlin.time.measureTime
 
@@ -163,8 +167,8 @@ fun parseInput(lines: List<String>): MutableMap<String, Module> {
 }
 
 fun main() {
-    val exampleLines = readLines("day20-example")
-    val lines = readLines("day20")
+    val exampleLines = readLines("2023", "day20-example")
+    val lines = readLines("2023", "day20")
 
     fun part1(lines: List<String>): Long {
         val modules = parseInput(lines)

@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.time.measureTime
 
 typealias Vector = Triple<Double, Double, Double>
@@ -112,8 +116,8 @@ fun planeForParallelHailstones(h1: Hailstone, h2: Hailstone): PlaneFormula {
 }
 
 fun main() {
-    val exampleLines = readLines("day24-example")
-    val lines = readLines("day24")
+    val exampleLines = readLines("2023", "day24-example")
+    val lines = readLines("2023", "day24")
 
     fun part1(lines: List<String>, lowerBound: Long, upperBound: Long): Int {
         val range = (lowerBound.toDouble()..upperBound.toDouble())

@@ -1,3 +1,8 @@
+package `2023`
+
+import Coord
+import Dir
+import Grid
 import java.io.File
 
 fun writeDebugDay16(grid: Grid, seenTilesList: List<Set<Pair<Coord, Dir>>>) {

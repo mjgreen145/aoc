@@ -8,9 +8,9 @@ enum class Dir {
 
 fun Any?.println() = println(this)
 
-fun readInput(name: String) = Path("src/main/resources/$name.txt").readText();
+fun readInput(year: String, name: String) = Path("src/main/resources/$year/$name.txt").readText();
 
-fun readLines(name: String) = Path("src/main/resources/$name.txt").readLines()
+fun readLines(year: String, name: String) = Path("src/main/resources/$year/$name.txt").readLines()
 
 fun pivotToCols(lines: List<String>): List<String> {
     return lines.first().mapIndexed { i, _ -> lines.map { it[i] }.joinToString("") }

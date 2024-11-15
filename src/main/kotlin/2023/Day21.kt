@@ -1,3 +1,11 @@
+package `2023`
+
+import Coord
+import Grid
+import adjacentCoords
+import get
+import println
+import readLines
 import java.util.*
 import kotlin.time.measureTime
 
@@ -77,8 +85,8 @@ fun getOffsetGrids(grid: Grid): List<Grid> {
 }
 
 fun main() {
-    val exampleLines = readLines("day21-example")
-    val lines = readLines("day21")
+    val exampleLines = readLines("2023", "day21-example")
+    val lines = readLines("2023", "day21")
 
     fun part1(grid: Grid, stepLimit: Int): Int {
         val start = findStart(grid)

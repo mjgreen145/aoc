@@ -1,3 +1,8 @@
+package `2023`
+
+import Coord
+import println
+import readLines
 import java.io.File
 import java.lang.Exception
 import kotlin.math.max
@@ -273,8 +278,8 @@ fun dijkstra2(grid: HeatGrid, start: Coord, end: Coord): Int {
 }
 
 fun main() {
-    val exampleLines = readLines("day17-example").map { it.map { c -> c.toString().toInt() } }
-    val lines = readLines("day17").map { it.map { c -> c.toString().toInt() } }
+    val exampleLines = readLines("2023", "day17-example").map { it.map { c -> c.toString().toInt() } }
+    val lines = readLines("2023", "day17").map { it.map { c -> c.toString().toInt() } }
 
     fun part1(grid: HeatGrid): Int {
         val start = Pair(0, 0)

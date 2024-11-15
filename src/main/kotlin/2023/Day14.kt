@@ -1,3 +1,9 @@
+package `2023`
+
+import Dir
+import pivotToCols
+import println
+import readLines
 import kotlin.time.measureTime
 
 fun rollLines(lines: List<String>, direction: Dir): List<String> {
@@ -41,8 +47,8 @@ fun calcLoad(lines: List<String>): Int {
 }
 
 fun main() {
-    val exampleLines = readLines("day14-example")
-    val lines = readLines("day14")
+    val exampleLines = readLines("2023", "day14-example")
+    val lines = readLines("2023", "day14")
 
     fun part1(lines: List<String>): Int {
         return calcLoad(lines.roll(Dir.North))

@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readInput
 import kotlin.time.measureTime
 
 fun hash(string: String): Int {
@@ -5,8 +9,8 @@ fun hash(string: String): Int {
 }
 
 fun main() {
-    val exampleInput = readInput("day15-example")
-    val input = readInput("day15")
+    val exampleInput = readInput("2023", "day15-example")
+    val input = readInput("2023", "day15")
 
     fun part1(input: String): Int {
         return input.split(",").map(::hash).sum()

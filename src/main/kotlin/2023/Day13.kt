@@ -1,3 +1,8 @@
+package `2023`
+
+import pivotToCols
+import println
+import readInput
 import java.lang.Exception
 import kotlin.time.measureTime
 
@@ -47,8 +52,8 @@ fun findReflectionIndex(lines: List<String>, smudgesAllowed: Int): Int? {
 }
 
 fun main() {
-    val exampleBlocks = readInput("day13-example").split("\n\n")
-    val blocks = readInput("day13").split("\n\n")
+    val exampleBlocks = readInput("2023", "day13-example").split("\n\n")
+    val blocks = readInput("2023", "day13").split("\n\n")
 
     fun part1(blocks: List<String>): Int = blocks.sumOf(::findMirror)
 

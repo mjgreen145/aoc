@@ -1,3 +1,7 @@
+package `2023`
+
+import println
+import readLines
 import kotlin.time.measureTime
 
 val knownCombinations = mutableMapOf<Pair<String, List<Int>>, Long>()
@@ -38,8 +42,8 @@ fun numCombinationsCached(springs: String, groups: List<Int>): Long {
 }
 
 fun main() {
-    val exampleLines = readLines("day12-example")
-    val lines = readLines("day12")
+    val exampleLines = readLines("2023", "day12-example")
+    val lines = readLines("2023", "day12")
 
     fun part1(lines: List<String>): Long {
         return lines.sumOf { line ->

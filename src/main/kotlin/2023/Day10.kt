@@ -1,3 +1,9 @@
+package `2023`
+
+import Coord
+import Dir
+import println
+import readLines
 import java.io.File
 import kotlin.time.measureTime
 
@@ -134,9 +140,9 @@ tailrec fun getContainedCoords(
 }
 
 fun main() {
-    val exampleLines = readLines("day10-example")
-    val exampleLines2 = readLines("day10-example2")
-    val lines = readLines("day10")
+    val exampleLines = readLines("2023", "day10-example")
+    val exampleLines2 = readLines("2023", "day10-example2")
+    val lines = readLines("2023", "day10")
 
     fun part1(lines: List<String>): Int {
         val (grid, start) = parseGrid(lines)

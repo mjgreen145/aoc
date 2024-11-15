@@ -1,3 +1,6 @@
+package `2023`
+
+import Coord
 import java.io.File
 
 fun writeDebugDay17(grid: HeatGrid, fastestRoutes: Map<Coord, Pair<Array<Coord>, Int>>) {

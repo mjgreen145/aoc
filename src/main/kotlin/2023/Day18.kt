@@ -1,3 +1,10 @@
+package `2023`
+
+import Coord
+import println
+import readLines
+import x
+import y
 import kotlin.math.absoluteValue
 import kotlin.time.measureTime
 
@@ -37,8 +44,8 @@ fun getTotalArea(instructions: List<Pair<String, Int>>): Long {
 }
 
 fun main() {
-    val exampleLines = readLines("day18-example")
-    val lines = readLines("day18")
+    val exampleLines = readLines("2023", "day18-example")
+    val lines = readLines("2023", "day18")
 
     fun part1(lines: List<String>): Long {
         val instructions = lines.map { line ->
