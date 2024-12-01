@@ -5,8 +5,8 @@ import println
 import readLines
 
 fun main() {
-    val grid = readLines("day17").map { it.map { c -> c.toString().toInt() } }
-    val lines = readLines("day17-debug")
+    val grid = readLines("2023", "day17").map { it.map { c -> c.toString().toInt() } }
+    val lines = readLines("2023", "day17-debug")
 
     val dists: MutableMap<Coord, Pair<List<Coord>, Int>> = mutableMapOf()
 

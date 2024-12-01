@@ -12,8 +12,8 @@ fun twoToPowerOf(power: Int): Int {
 
 fun numWinningNumbers(line: String): Int {
     val lists = line.substringAfter(":").split("|")
-    val winningNums = lists.first.trim().split(Regex("\\s+")).map { it.toInt() }.toSet()
-    val lineNums = lists.last.trim().split(Regex("\\s+")).map { it.toInt() }.toSet()
+    val winningNums = lists.first().trim().split(Regex("\\s+")).map { it.toInt() }.toSet()
+    val lineNums = lists.last().trim().split(Regex("\\s+")).map { it.toInt() }.toSet()
 
     return lineNums.intersect(winningNums).size;
 }

@@ -29,7 +29,7 @@ fun main() {
                     arrayOf(lineIndex - 1, lineIndex, lineIndex + 1).contains(num.row) &&
                             IntRange(num.charRange.first - 1, num.charRange.last + 1).contains(match.range.first);
                 }
-                if (adjacentNumbers.size == 2) adjacentNumbers.first.value * adjacentNumbers.last.value else 0;
+                if (adjacentNumbers.size == 2) adjacentNumbers.first().value * adjacentNumbers.last().value else 0;
             }
         }
 

@@ -25,7 +25,7 @@ fun parseGameLine(gameLine: String): Game {
     val match = regex.find(gameLine)
     if (match != null) {
         val gameNumber = match.groupValues[1].toInt()
-        val roundsText = gameLine.split(":").last
+        val roundsText = gameLine.split(":").last()
 
         return Game(
             gameNumber = gameNumber,
