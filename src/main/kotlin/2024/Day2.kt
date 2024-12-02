@@ -11,7 +11,7 @@ enum class Dir {
 
 fun isSafeInDir(xs: List<Int>, dir: Dir): Boolean {
     return xs.windowed(2)
-        .all { (a, b) -> a != b && abs(a - b) <= 3 && ((dir == Dir.Asc && a < b) || (dir == Dir.Desc && b < a)) }
+        .all { (a, b) -> abs(a - b) in 1..3 && ((dir == Dir.Asc && a < b) || (dir == Dir.Desc && b < a)) }
 }
 
 fun isSafe(xs: List<Int>): Boolean {
@@ -30,20 +30,20 @@ fun allListsOneRemoved(xs: List<Int>): List<List<Int>> {
     }
 }
 
+fun toReport(line: String): List<Int> {
+    return line.split(" ").map { c -> c.toInt() }
+}
+
 fun main() {
     val exampleLines = readLines("2024", "day2-example")
     val lines = readLines("2024", "day2")
 
     fun part1(lines: List<String>): Int {
-        return lines.count { line -> isSafe(line.split(" ").map { c -> c.toInt() }) }
+        return lines.map { toReport(it) }.count { isSafe(it) }
     }
 
     fun part2(lines: List<String>): Int {
-        return lines.count { line ->
-            val ints = line.split(" ").map { c -> c.toInt() }
-            val allPossible = allListsOneRemoved(ints)
-            allPossible.any(::isSafe)
-        }
+        return lines.count { allListsOneRemoved(toReport(it)).any(::isSafe) }
     }
 
     val part1Example = part1(exampleLines)
