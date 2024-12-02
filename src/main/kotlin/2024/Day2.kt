@@ -23,11 +23,7 @@ fun isSafe(xs: List<Int>): Boolean {
 }
 
 fun allListsOneRemoved(xs: List<Int>): List<List<Int>> {
-    return xs.indices.map { idx ->
-        val newList = xs.toMutableList()
-        newList.removeAt(idx)
-        newList
-    }
+    return xs.indices.map { idx -> xs.take(idx) + xs.drop(idx + 1) }
 }
 
 fun toReport(line: String): List<Int> {
