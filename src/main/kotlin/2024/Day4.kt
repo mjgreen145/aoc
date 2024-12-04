@@ -6,7 +6,7 @@ import println
 import readLines
 import kotlin.time.measureTime
 
-fun xmasesStartintAt(x: Int, y: Int, g: Grid): Int {
+fun xmasesStartingAt(x: Int, y: Int, g: Grid): Int {
     val w1 = g.getOrEmpty(x, y) + g.getOrEmpty(x + 1, y) + g.getOrEmpty(x + 2, y) + g.getOrEmpty(x + 3, y)
     val w2 = g.getOrEmpty(x, y) + g.getOrEmpty(x - 1, y) + g.getOrEmpty(x - 2, y) + g.getOrEmpty(x - 3, y)
     val w3 = g.getOrEmpty(x, y) + g.getOrEmpty(x, y + 1) + g.getOrEmpty(x, y + 2) + g.getOrEmpty(x, y + 3)
@@ -32,7 +32,7 @@ fun main() {
 
     fun part1(lines: List<String>): Int {
         return lines.indices.sumOf { y ->
-            lines[y].indices.sumOf { x -> xmasesStartintAt(x, y, lines) }
+            lines[y].indices.sumOf { x -> xmasesStartingAt(x, y, lines) }
         }
     }
 
