@@ -24,6 +24,12 @@ typealias Grid = List<String>
 
 fun Grid.get(x: Int, y: Int): Char = this[y][x]
 fun Grid.get(coord: Coord): Char = this.get(coord.x(), coord.y())
+fun Grid.getOrEmpty(x: Int, y: Int): String {
+    if (y in indices && x in 0..<this[y].length) {
+        return this[y][x].toString()
+    }
+    return ""
+}
 
 fun adjacentCoords(grid: Grid, currentCoord: Coord): List<Coord> {
     val (x, y) = currentCoord
