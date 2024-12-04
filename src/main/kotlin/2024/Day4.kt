@@ -24,9 +24,9 @@ fun main() {
     fun part2(grid: Grid): Int {
         return grid.allCoords().count { c ->
             val range = -1..1
-            val w1 = range.joinToString("") { dist -> grid.getOrEmpty(c.move(Dir8.NE, dist)) }
-            val w2 = range.joinToString("") { dist -> grid.getOrEmpty(c.move(Dir8.NW, dist)) }
-            listOf(w1, w2).all { w -> w == "MAS" || w == "SAM" }
+            listOf(Dir8.NE, Dir8.NW)
+                .map { dir -> range.joinToString("") { dist -> grid.getOrEmpty(c.move(dir, dist)) } }
+                .all { w -> w == "MAS" || w == "SAM" }
         }
     }
 
