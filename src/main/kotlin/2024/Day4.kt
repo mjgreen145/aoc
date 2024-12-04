@@ -1,44 +1,32 @@
 package `2024`
 
+import Dir8
 import Grid
+import allCoords
 import getOrEmpty
+import move
 import println
 import readLines
 import kotlin.time.measureTime
-
-fun xmasesStartingAt(x: Int, y: Int, g: Grid): Int {
-    val w1 = g.getOrEmpty(x, y) + g.getOrEmpty(x + 1, y) + g.getOrEmpty(x + 2, y) + g.getOrEmpty(x + 3, y)
-    val w2 = g.getOrEmpty(x, y) + g.getOrEmpty(x - 1, y) + g.getOrEmpty(x - 2, y) + g.getOrEmpty(x - 3, y)
-    val w3 = g.getOrEmpty(x, y) + g.getOrEmpty(x, y + 1) + g.getOrEmpty(x, y + 2) + g.getOrEmpty(x, y + 3)
-    val w4 = g.getOrEmpty(x, y) + g.getOrEmpty(x, y - 1) + g.getOrEmpty(x, y - 2) + g.getOrEmpty(x, y - 3)
-    val w5 = g.getOrEmpty(x, y) + g.getOrEmpty(x + 1, y + 1) + g.getOrEmpty(x + 2, y + 2) + g.getOrEmpty(x + 3, y + 3)
-    val w6 = g.getOrEmpty(x, y) + g.getOrEmpty(x + 1, y - 1) + g.getOrEmpty(x + 2, y - 2) + g.getOrEmpty(x + 3, y - 3)
-    val w7 = g.getOrEmpty(x, y) + g.getOrEmpty(x - 1, y + 1) + g.getOrEmpty(x - 2, y + 2) + g.getOrEmpty(x - 3, y + 3)
-    val w8 = g.getOrEmpty(x, y) + g.getOrEmpty(x - 1, y - 1) + g.getOrEmpty(x - 2, y - 2) + g.getOrEmpty(x - 3, y - 3)
-
-    return listOf(w1, w2, w3, w4, w5, w6, w7, w8).count { it == "XMAS" }
-}
-
-fun masInAnX(x: Int, y: Int, g: Grid): Boolean {
-    val w1 = g.getOrEmpty(x - 1, y - 1) + g.getOrEmpty(x, y) + g.getOrEmpty(x + 1, y + 1)
-    val w2 = g.getOrEmpty(x + 1, y - 1) + g.getOrEmpty(x, y) + g.getOrEmpty(x - 1, y + 1)
-
-    return (w1 == "MAS" || w1 == "SAM") && (w2 == "MAS" || w2 == "SAM")
-}
 
 fun main() {
     val exampleLines = readLines("2024", "day4-example")
     val lines = readLines("2024", "day4")
 
-    fun part1(lines: List<String>): Int {
-        return lines.indices.sumOf { y ->
-            lines[y].indices.sumOf { x -> xmasesStartingAt(x, y, lines) }
+    fun part1(grid: Grid): Int {
+        val range = 0..3
+        return grid.allCoords().sumOf { c ->
+            Dir8.entries.map { dir -> range.joinToString("") { dist -> grid.getOrEmpty(c.move(dir, dist)) } }
+                .count { it == "XMAS" }
         }
     }
 
-    fun part2(lines: List<String>): Int {
-        return lines.indices.sumOf { y ->
-            lines[y].indices.count { x -> masInAnX(x, y, lines) }
+    fun part2(grid: Grid): Int {
+        return grid.allCoords().count { c ->
+            val range = -1..1
+            val w1 = range.joinToString("") { dist -> grid.getOrEmpty(c.move(Dir8.NE, dist)) }
+            val w2 = range.joinToString("") { dist -> grid.getOrEmpty(c.move(Dir8.NW, dist)) }
+            listOf(w1, w2).all { w -> w == "MAS" || w == "SAM" }
         }
     }
 
