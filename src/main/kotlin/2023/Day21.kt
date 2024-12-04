@@ -27,7 +27,7 @@ fun getReachableCoords(grid: Grid, start: Coord): Map<Coord, Int> {
         }
 
         seenCoords[coord] = stepsTaken
-        adjacentCoords(grid, coord)
+        grid.adjacentCoords(coord)
             .filter { grid.get(it) != '#' }
             .forEach { nextCoord ->
                 val currentStepsToNext = seenCoords[nextCoord]

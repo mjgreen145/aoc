@@ -29,7 +29,7 @@ fun validNextStepsWithSlopes(grid: Grid, coord: Coord): List<Coord> {
 }
 
 fun validNestStepsNoSlopes(grid: Grid, coord: Coord): List<Coord> {
-    return adjacentCoords(grid, coord).filter { grid.get(it) != '#' }
+    return grid.adjacentCoords(coord).filter { grid.get(it) != '#' }
 }
 
 typealias Graph = Map<Coord, Set<Pair<Coord, Int>>>
