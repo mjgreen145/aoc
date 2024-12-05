@@ -38,15 +38,15 @@ fun main() {
 
     fun part2(lines: List<String>): Int {
         val (rules, updates) = parseInput(lines)
+        val ruleSet = rules.toSet()
         val ruleComparator = Comparator<Int> { a, b ->
-            val rule = rules.find { rule -> rule == Pair(a, b) || rule == Pair(b, a) }
-            when (rule) {
-                Pair(a, b) -> 1
-                Pair(b, a) -> -1
+            when {
+                ruleSet.contains(Pair(a, b)) -> 1
+                ruleSet.contains(Pair(b, a)) -> -1
                 else -> 0
             }
         }
-        return updates.filter { !isCorrect(it, rules) }.map { it.sortedWith(ruleComparator) }.sumOf { middleItem(it) }
+        return updates.filterNot { isCorrect(it, rules) }.map { it.sortedWith(ruleComparator) }.sumOf { middleItem(it) }
     }
 
     val part1Example = part1(exampleLines)
