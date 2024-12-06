@@ -14,23 +14,29 @@ import readLines
 import turn
 import kotlin.time.measureTime
 
-fun loops(grid: Grid, obstruction: Coord): Boolean {
+fun walk(grid: Grid, obstruction: Coord?): Pair<Set<Coord>, Boolean> {
     val start = grid.findChar('^');
-    val seenCoords = mutableSetOf<Pair<Coord, Dir>>()
     var pos = start
     var dir = Dir.North
-    while (grid.containsCoord(pos)) {
+    val seenCoords = mutableSetOf<Pair<Coord, Dir>>()
+    var looped = false
+    while (true) {
         if (seenCoords.contains(Pair(pos, dir))) {
-            return true;
+            looped = true
+            break
         }
+        if (!grid.containsCoord(pos)) break
+
         seenCoords.add(Pair(pos, dir))
-        while (pos.move(dir, 1) == obstruction || grid.getOrEmpty(pos.move(dir, 1)) == "#") {
+
+        val next = pos.move(dir, 1)
+        if (next == obstruction || grid.getOrEmpty(next) == "#") {
             dir = turn(dir, Turn.Right)
+        } else {
+            pos = next
         }
-        seenCoords.add(Pair(pos, dir))
-        pos = pos.move(dir, 1)
     }
-    return false
+    return Pair(seenCoords.map { (coord) -> coord }.toSet(), looped)
 }
 
 fun main() {
@@ -38,22 +44,13 @@ fun main() {
     val lines = readLines("2024", "day6")
 
     fun part1(grid: Grid): Int {
-        val start = grid.findChar('^');
-        val seenCoords = mutableSetOf<Coord>()
-        var pos = start
-        var dir = Dir.North
-        while (grid.containsCoord(pos)) {
-            seenCoords.add(pos)
-            while (grid.getOrEmpty(pos.move(dir, 1)) == "#") {
-                dir = turn(dir, Turn.Right)
-            }
-            pos = pos.move(dir, 1)
-        }
-        return seenCoords.size
+        return walk(grid, null).first.size
     }
 
     fun part2(grid: Grid): Int {
-        return grid.allCoords().filter { grid.get(it) == '.' }.count { c -> loops(grid, c) }
+        val start = grid.findChar('^');
+        val normalPath = walk(grid, null).first
+        return (normalPath - start).count { c -> walk(grid, c).second }
     }
 
     val part1Example = part1(exampleLines)
