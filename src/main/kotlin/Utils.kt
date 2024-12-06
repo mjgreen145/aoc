@@ -13,12 +13,23 @@ fun pivotToCols(lines: List<String>): List<String> {
 }
 
 // Grid stuff
+enum class Turn {
+    Right, Left
+}
 enum class Dir {
     North, South, East, West
 }
-
 enum class Dir8 {
     N, NE, E, SE, S, SW, W, NW
+}
+
+fun turn(dir: Dir, turn: Turn): Dir {
+    return when (dir) {
+        Dir.North -> if (turn == Turn.Left) Dir.West else Dir.East
+        Dir.South -> if (turn == Turn.Left) Dir.East else Dir.West
+        Dir.East -> if (turn == Turn.Left) Dir.North else Dir.South
+        Dir.West -> if (turn == Turn.Left) Dir.South else Dir.North
+    }
 }
 
 typealias Coord = Pair<Int, Int>
@@ -57,11 +68,23 @@ fun Grid.getOrEmpty(x: Int, y: Int): String {
     }
     return ""
 }
+
 fun Grid.getOrEmpty(coord: Coord): String = this.getOrEmpty(coord.x(), coord.y())
 fun Grid.allCoords(): List<Coord> = this.indices.flatMap { y -> this[y].indices.map { x -> Pair(x, y) } }
-fun Grid.contains(c: Coord): Boolean {
+fun Grid.containsCoord(c: Coord): Boolean {
     return (c.x() in this.first().indices && c.y() in this.indices)
 }
+
 fun Grid.adjacentCoords(c: Coord): List<Coord> {
-    return Dir.entries.map { dir -> c.move(dir, 1) }.filter { this.contains(it) }
+    return Dir.entries.map { dir -> c.move(dir, 1) }.filter { this.containsCoord(it) }
+}
+
+fun Grid.findChar(c: Char): Coord {
+    this.indices.forEach { y ->
+        val x = this[y].indexOf(c)
+        if (x != -1) {
+            return Pair(x, y)
+        }
+    }
+    throw Exception("Char $c not found")
 }
