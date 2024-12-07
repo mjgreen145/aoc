@@ -9,30 +9,30 @@ enum class Dir {
     Asc, Desc
 }
 
-fun isSafeInDir(xs: List<Int>, dir: Dir): Boolean {
-    return xs.windowed(2)
-        .all { (a, b) -> abs(a - b) in 1..3 && ((dir == Dir.Asc && a < b) || (dir == Dir.Desc && b < a)) }
-}
-
-fun isSafe(xs: List<Int>): Boolean {
-    if (xs.size < 2) return true
-    if (xs[0] == xs[1]) return false
-
-    val dir = if (xs[0] < xs[1]) Dir.Asc else Dir.Desc
-    return isSafeInDir(xs, dir);
-}
-
-fun allListsOneRemoved(xs: List<Int>): List<List<Int>> {
-    return xs.indices.map { idx -> xs.take(idx) + xs.drop(idx + 1) }
-}
-
-fun toReport(line: String): List<Int> {
-    return line.split(" ").map { c -> c.toInt() }
-}
-
 fun main() {
     val exampleLines = readLines("2024", "day2-example")
     val lines = readLines("2024", "day2")
+
+    fun isSafeInDir(xs: List<Int>, dir: Dir): Boolean {
+        return xs.windowed(2)
+            .all { (a, b) -> abs(a - b) in 1..3 && ((dir == Dir.Asc && a < b) || (dir == Dir.Desc && b < a)) }
+    }
+
+    fun isSafe(xs: List<Int>): Boolean {
+        if (xs.size < 2) return true
+        if (xs[0] == xs[1]) return false
+
+        val dir = if (xs[0] < xs[1]) Dir.Asc else Dir.Desc
+        return isSafeInDir(xs, dir);
+    }
+
+    fun allListsOneRemoved(xs: List<Int>): List<List<Int>> {
+        return xs.indices.map { idx -> xs.take(idx) + xs.drop(idx + 1) }
+    }
+
+    fun toReport(line: String): List<Int> {
+        return line.split(" ").map { c -> c.toInt() }
+    }
 
     fun part1(lines: List<String>): Int {
         return lines.map { toReport(it) }.count { isSafe(it) }

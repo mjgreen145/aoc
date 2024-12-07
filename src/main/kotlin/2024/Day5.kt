@@ -9,27 +9,27 @@ import kotlin.time.measureTime
 typealias Rule = Pair<Int, Int>
 typealias Update = List<Int>
 
-fun parseInput(lines: List<String>): Pair<List<Rule>, List<Update>> {
-    val (rulesText, updateText) = lines.filter { it.isNotEmpty() }.partition { it.contains('|') }
-    val rules = rulesText.map { text ->
-        val (a, b) = text.split('|');
-        Pair(a.toInt(), b.toInt())
-    }
-    val updates = updateText.map { text -> text.split(',').map { it.toInt() } }
-    return Pair(rules, updates)
-}
-
-fun isCorrect(update: Update, rules: List<Rule>): Boolean {
-    return rules.filter { update.containsAll(it.toList()) }.all { (a, b) -> update.indexOf(a) < update.indexOf(b) }
-}
-
-fun <T> middleItem(xs: List<T>): T {
-    return xs[xs.size / 2]
-}
-
 fun main() {
     val exampleLines = readLines("2024", "day5-example")
     val lines = readLines("2024", "day5")
+
+    fun parseInput(lines: List<String>): Pair<List<Rule>, List<Update>> {
+        val (rulesText, updateText) = lines.filter { it.isNotEmpty() }.partition { it.contains('|') }
+        val rules = rulesText.map { text ->
+            val (a, b) = text.split('|');
+            Pair(a.toInt(), b.toInt())
+        }
+        val updates = updateText.map { text -> text.split(',').map { it.toInt() } }
+        return Pair(rules, updates)
+    }
+
+    fun isCorrect(update: Update, rules: List<Rule>): Boolean {
+        return rules.filter { update.containsAll(it.toList()) }.all { (a, b) -> update.indexOf(a) < update.indexOf(b) }
+    }
+
+    fun <T> middleItem(xs: List<T>): T {
+        return xs[xs.size / 2]
+    }
 
     fun part1(lines: List<String>): Int {
         val (rules, updates) = parseInput(lines)
