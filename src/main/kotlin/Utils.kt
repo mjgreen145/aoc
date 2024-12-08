@@ -33,6 +33,7 @@ fun turn(dir: Dir, turn: Turn): Dir {
 }
 
 typealias Coord = Pair<Int, Int>
+typealias Vector2D = Pair<Int, Int>
 
 fun Coord.x(): Int = this.first
 fun Coord.y(): Int = this.second
@@ -56,6 +57,16 @@ fun Coord.move(dir: Dir8, dist: Int): Coord {
         Dir8.SE -> this.move(Dir.South, dist).move(Dir.East, dist)
         Dir8.SW -> this.move(Dir.South, dist).move(Dir.West, dist)
     }
+}
+fun Coord.add(other: Coord): Vector2D {
+    return Pair(this.x() + other.x(), this.y() + other.y())
+}
+fun Coord.minus(other: Coord): Vector2D {
+    return Pair(this.x() - other.x(), this.y() - other.y())
+}
+
+fun Vector2D.mul(scalar: Int): Vector2D {
+    return Pair(this.x() * scalar, this.y() * scalar)
 }
 
 typealias Grid = List<String>
