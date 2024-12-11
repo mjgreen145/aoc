@@ -36,14 +36,17 @@ fun main() {
     val exampleLines = readInput("2024", "day11-example")
     val input = readInput("2024", "day11")
 
-    fun part1(input: String): Long {
+    fun getStonesGenerated(input: String, blinks: Int): Long {
         val startStones = input.split(" ").map { it.toLong() }
-        return startStones.sumOf { numStonesGeneratedCached(it, 25) }
+        return startStones.sumOf { numStonesGeneratedCached(it, blinks) }
+    }
+
+    fun part1(input: String): Long {
+        return getStonesGenerated(input, 25)
     }
 
     fun part2(input: String): Long {
-        val startStones = input.split(" ").map { it.toLong() }
-        return startStones.sumOf { numStonesGeneratedCached(it, 75) }
+        return getStonesGenerated(input, 75)
     }
 
     val part1Example = part1(exampleLines)
