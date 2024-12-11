@@ -12,10 +12,7 @@ fun main() {
         if (stone == 0L) return listOf(1L)
         val str = stone.toString()
         if (str.length % 2 == 0) {
-            return listOf(
-                str.substring(0, str.length / 2).toLong(),
-                str.substring(str.length / 2).toLong()
-            )
+            return listOf(str.take(str.length / 2).toLong(), str.drop(str.length / 2).toLong())
         }
         return listOf((stone * 2024L))
     }
@@ -25,7 +22,7 @@ fun main() {
     fun numStonesGenerated(stone: Long, blinksLeft: Int): Long {
         return cache.getOrPut(Pair(stone, blinksLeft)) {
             if (blinksLeft == 0) return 1
-            return blink(stone).sumOf { numStonesGenerated(it, blinksLeft - 1) }
+            blink(stone).sumOf { numStonesGenerated(it, blinksLeft - 1) }
         }
     }
 
