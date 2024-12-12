@@ -5,7 +5,7 @@ import readLines
 import kotlin.math.abs
 import kotlin.time.measureTime
 
-enum class Dir {
+enum class Day2Dir {
     Asc, Desc
 }
 
@@ -13,16 +13,16 @@ fun main() {
     val exampleLines = readLines("2024", "day2-example")
     val lines = readLines("2024", "day2")
 
-    fun isSafeInDir(xs: List<Int>, dir: Dir): Boolean {
+    fun isSafeInDir(xs: List<Int>, dir: Day2Dir): Boolean {
         return xs.windowed(2)
-            .all { (a, b) -> abs(a - b) in 1..3 && ((dir == Dir.Asc && a < b) || (dir == Dir.Desc && b < a)) }
+            .all { (a, b) -> abs(a - b) in 1..3 && ((dir == Day2Dir.Asc && a < b) || (dir == Day2Dir.Desc && b < a)) }
     }
 
     fun isSafe(xs: List<Int>): Boolean {
         if (xs.size < 2) return true
         if (xs[0] == xs[1]) return false
 
-        val dir = if (xs[0] < xs[1]) Dir.Asc else Dir.Desc
+        val dir = if (xs[0] < xs[1]) Day2Dir.Asc else Day2Dir.Desc
         return isSafeInDir(xs, dir);
     }
 

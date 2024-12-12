@@ -37,7 +37,7 @@ typealias Vector2D = Pair<Int, Int>
 
 fun Coord.x(): Int = this.first
 fun Coord.y(): Int = this.second
-fun Coord.move(dir: Dir, dist: Int): Coord {
+fun Coord.move(dir: Dir, dist: Int = 1): Coord {
     return when (dir) {
         Dir.North -> Coord(this.x(), this.y() - dist)
         Dir.South -> Coord(this.x(), this.y() + dist)
@@ -46,7 +46,7 @@ fun Coord.move(dir: Dir, dist: Int): Coord {
     }
 }
 
-fun Coord.move(dir: Dir8, dist: Int): Coord {
+fun Coord.move(dir: Dir8, dist: Int = 1): Coord {
     return when (dir) {
         Dir8.N -> this.move(Dir.North, dist)
         Dir8.S -> this.move(Dir.South, dist)
@@ -63,6 +63,14 @@ fun Coord.add(other: Coord): Vector2D {
 }
 fun Coord.minus(other: Coord): Vector2D {
     return Pair(this.x() - other.x(), this.y() - other.y())
+}
+fun Coord.adjacent(): Set<Coord> {
+    return setOf(
+        Pair(this.x() - 1, this.y()),
+        Pair(this.x() + 1, this.y()),
+        Pair(this.x(), this.y() - 1),
+        Pair(this.x(), this.y() + 1),
+    )
 }
 
 fun Vector2D.mul(scalar: Int): Vector2D {

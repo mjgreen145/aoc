@@ -1,3 +1,5 @@
+import readLines
+import println
 import kotlin.time.measureTime
 
 fun main() {
