@@ -107,3 +107,5 @@ fun Grid.findChar(c: Char): Coord {
     }
     throw Exception("Char $c not found")
 }
+
+data class LineFormula(val a: Double, val b: Double, val c: Double)
