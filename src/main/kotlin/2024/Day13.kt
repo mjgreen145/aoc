@@ -19,7 +19,7 @@ fun main() {
     fun parseGames(input: String, targetAdjustment: Long): List<ClawGame> {
         return input.split("\n\n").map { lines ->
             val (a, b, t) = lines.split("\n")
-                .map { text -> Regex("\\+(\\d+).*\\+(\\d+)").find(text)!!.groupValues.drop(1).map { it.toDouble() } }
+                .map { text -> Regex("(\\d+)\\D+(\\d+)").find(text)!!.groupValues.drop(1).map { it.toDouble() } }
             Pair(LineFormula(a[0], b[0], t[0] + targetAdjustment), LineFormula(a[1], b[1], t[1] + targetAdjustment))
         }
     }
