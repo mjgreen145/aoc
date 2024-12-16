@@ -34,7 +34,7 @@ fun main() {
 
             val next = pos.move(dir, 1)
             if (next == obstruction || grid.getOrEmpty(next) == "#") {
-                dir = turn(dir, Turn.Right)
+                dir = dir.turn(Turn.Right)
             } else {
                 pos = next
             }

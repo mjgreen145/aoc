@@ -47,14 +47,14 @@ fun main() {
     fun walkCheckingLeft(grid: Grid, pos: Coord, dir: Dir, value: String, walked: MutableSet<Pair<Coord, Dir>>, turns: Int = 0): Int {
         if (walked.contains(Pair(pos, dir))) { return turns }
 
-        val posToLeft = pos.move(turn(dir, Turn.Left))
+        val posToLeft = pos.move(dir.turn(Turn.Left))
         val canTurnLeft = grid.containsCoord(posToLeft) && grid.getOrEmpty(posToLeft) == value
         val mustTurnRight = grid.getOrEmpty(pos.move(dir)) != value
         walked.add(Pair(pos, dir))
 
         return when {
-            canTurnLeft -> walkCheckingLeft(grid, posToLeft, turn(dir, Turn.Left), value, walked, turns + 1)
-            mustTurnRight -> walkCheckingLeft(grid, pos, turn(dir, Turn.Right), value, walked, turns + 1)
+            canTurnLeft -> walkCheckingLeft(grid, posToLeft, dir.turn(Turn.Left), value, walked, turns + 1)
+            mustTurnRight -> walkCheckingLeft(grid, pos, dir.turn(Turn.Right), value, walked, turns + 1)
             else -> walkCheckingLeft(grid, pos.move(dir), dir, value, walked, turns)
         }
     }

@@ -23,8 +23,8 @@ enum class Dir8 {
     N, NE, E, SE, S, SW, W, NW
 }
 
-fun turn(dir: Dir, turn: Turn): Dir {
-    return when (dir) {
+fun Dir.turn(turn: Turn): Dir {
+    return when (this) {
         Dir.North -> if (turn == Turn.Left) Dir.West else Dir.East
         Dir.South -> if (turn == Turn.Left) Dir.East else Dir.West
         Dir.East -> if (turn == Turn.Left) Dir.North else Dir.South
