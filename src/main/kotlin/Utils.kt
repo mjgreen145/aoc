@@ -16,9 +16,11 @@ fun pivotToCols(lines: List<String>): List<String> {
 enum class Turn {
     Right, Left
 }
+
 enum class Dir {
     North, South, East, West
 }
+
 enum class Dir8 {
     N, NE, E, SE, S, SW, W, NW
 }
@@ -58,12 +60,15 @@ fun Coord.move(dir: Dir8, dist: Int = 1): Coord {
         Dir8.SW -> this.move(Dir.South, dist).move(Dir.West, dist)
     }
 }
+
 fun Coord.add(other: Coord): Vector2D {
     return Pair(this.x() + other.x(), this.y() + other.y())
 }
+
 fun Coord.minus(other: Coord): Vector2D {
     return Pair(this.x() - other.x(), this.y() - other.y())
 }
+
 fun Coord.adjacent(): Set<Coord> {
     return setOf(
         Pair(this.x() - 1, this.y()),
@@ -106,6 +111,10 @@ fun Grid.findChar(c: Char): Coord {
         }
     }
     throw Exception("Char $c not found")
+}
+
+fun gridOfSize(x: Int, y: Int, char: Char = '.'): Grid {
+    return List(y) { List(x) { char }.joinToString("") }
 }
 
 data class LineFormula(val a: Double, val b: Double, val c: Double)
