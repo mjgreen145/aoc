@@ -68,15 +68,12 @@ fun main() {
         val maxPower = instructions.size - 1
 
         fun solveFor(baseA: Long, index: Int): Long? {
+            if (index > maxPower) return baseA
             for (i in 0..7) {
                 val a = baseA + pow(8, maxPower - index) * i
                 if (run(instructions, a).reversed()[index].toInt() == instructions.reversed()[index].toInt()) {
-                    if (index == maxPower) {
-                        return a
-                    } else {
-                        val solution = solveFor(a, index + 1)
-                        if (solution != null) return solution
-                    }
+                    val solution = solveFor(a, index + 1)
+                    if (solution != null) return solution
                 }
             }
             return null
