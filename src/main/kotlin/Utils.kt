@@ -1,6 +1,7 @@
 import kotlin.io.path.Path
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
+import kotlin.math.abs
 
 fun Any?.println() = println(this)
 
@@ -77,6 +78,9 @@ fun Coord.adjacent(): Set<Coord> {
         Pair(this.x(), this.y() + 1),
     )
 }
+fun Coord.distance(c: Coord): Int {
+    return abs(this.x() - c.x()) + abs(this.y() - c.y())
+}
 
 fun Vector2D.mul(scalar: Int): Vector2D {
     return Pair(this.x() * scalar, this.y() * scalar)
@@ -111,6 +115,12 @@ fun Grid.findChar(c: Char): Coord {
         }
     }
     throw Exception("Char $c not found")
+}
+fun Grid.reachableCoords(coord: Coord, distance: Int): List<Coord> {
+    return (-distance..distance).flatMap { x ->
+        val yDist = distance - abs(x)
+        (-yDist..yDist).map { y -> Pair(coord.x() + x, coord.y() + y) }
+    }.filter { this.containsCoord(it) }
 }
 
 fun gridOfSize(x: Int, y: Int, char: Char = '.'): Grid {
