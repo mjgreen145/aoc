@@ -3,16 +3,13 @@ package `2024`
 import Coord
 import Grid
 import adjacentCoords
-import containsCoord
 import distance
 import findChar
 import get
 import println
 import reachableCoords
 import readLines
-import x
-import y
-import kotlin.math.abs
+import java.util.*
 import kotlin.time.measureTime
 
 fun main() {
@@ -21,16 +18,15 @@ fun main() {
 
     fun race(grid: Grid, start: Coord): Map<Coord, Int> {
         val seen = mutableMapOf<Coord, Int>()
-        val toCheck = mutableListOf(Pair(start, 0))
+        val q = PriorityQueue<Pair<Coord, Int>> {t1, t2 -> t2.second - t1.second}
+        q.add(Pair(start, 0))
 
-        while (toCheck.isNotEmpty()) {
-            val (coord, steps) = toCheck.removeFirst()
-            if (seen.getOrDefault(coord, Int.MAX_VALUE) < steps) continue
+        while (q.isNotEmpty()) {
+            val (coord, steps) = q.remove()
+            if (seen.containsKey(coord)) continue
             seen[coord] = steps
 
-            grid.adjacentCoords(coord).filter { grid.get(it) != '#' }.forEach {
-                toCheck.add(Pair(it, steps + 1))
-            }
+            grid.adjacentCoords(coord).filter { grid.get(it) != '#' }.forEach { q.add(Pair(it, steps + 1)) }
         }
 
         return seen
